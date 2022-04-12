@@ -186,23 +186,6 @@ public class WorldActivity extends AppCompatActivity
             e.printStackTrace();
             finish();
         }
-//
-//        new AsyncTask<Void, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//
-//                try {
-//                    //try to load world-data (Opens chunk-database for later usage)
-//                    world.getWorldData().openDB();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                return null;
-//            }
-//        }.execute();
-//        finish();
-//        if(1==1)return;
-
 
         Bundle bundle = new Bundle();
         bundle.putString("seed", worldSeed);

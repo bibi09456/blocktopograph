@@ -32,5 +32,6 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar', '*.so'], dir: 'libs')
+//    implementation 'androidx.annotation:annotation:1.2.0'
     testImplementation 'junit:junit:4.12'
 }
