@@ -487,4 +487,5 @@
     <string name="auto_backup_caption">Auto Backup In Progress...</string>
     <string name="auto_backup_name">[Auto]</string>
     <string name="world_name_broken">Broken World</string>
+    <string name="world_isn_t_found">World isn\'t found</string>
 </resources>

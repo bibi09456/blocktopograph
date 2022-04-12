@@ -76,7 +76,6 @@ public final class CreateWorldActivity extends AppCompatActivity {
     }
 
     public void onClickPositiveButton(View view) {
-        //Toast.makeText(this, "fuck", Toast.LENGTH_SHORT).show();
         new CreateWorldTask(this).execute();
     }
 
@@ -227,7 +226,7 @@ public final class CreateWorldActivity extends AppCompatActivity {
                             && (ltest = layers.get(3)).block == BlockTemplates.getOfType("minecraft:bedrock")[0]
                             && ltest.amount == 1;
                 }
-                Layer[] alayers = new Layer[lsize < 3 ? 3 : lsize];
+                Layer[] alayers = new Layer[Math.max(lsize, 3)];
                 for (int i = 0; i < lsize; i++) {
                     alayers[i] = layers.get(lsize - i - 1);
                 }

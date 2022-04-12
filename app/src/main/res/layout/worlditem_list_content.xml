@@ -60,7 +60,10 @@
                 android:id="@+id/world_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
                 android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="0.5MB" />
 
@@ -70,7 +73,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_toEndOf="@+id/world_size"
-                android:layout_toRightOf="@+id/world_size"
                 android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="Creative" />
 
@@ -80,9 +82,21 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_toEndOf="@+id/world_gamemode"
-                android:layout_toRightOf="@+id/world_gamemode"
                 android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="01/02/1234" />
+
+            <TextView
+                android:id="@+id/world_last_opened_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_toEndOf="@+id/world_last_played"
+                android:textAppearance="?attr/textAppearanceListItem"
+                tools:text="1.18.0" />
         </RelativeLayout>
 
         <TextView

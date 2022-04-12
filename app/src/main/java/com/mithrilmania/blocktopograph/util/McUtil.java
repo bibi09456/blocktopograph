@@ -9,13 +9,13 @@ public final class McUtil {
     @NonNull
 
     public static File getMinecraftWorldsDir(File sdcard) {
-        return new File(sdcard, "games/com.mojang/minecraftWorlds");
+        return new File(sdcard, "Android/data/com.mojang.minecraftpe/files/games/com.mojang/minecraftWorlds");
     }
 
     @NonNull
 
     public static File getBtgTestDir(File sdcard) {
-        return new File(sdcard, "games/com.mojang/btgTest");
+        return new File(sdcard, "Android/data/com.mojang.minecraftpe/files/games/com.mojang/btgTest");
     }
 
     @NonNull

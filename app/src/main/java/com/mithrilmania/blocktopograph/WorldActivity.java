@@ -72,22 +72,8 @@ public class WorldActivity extends AppCompatActivity
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        }
-        // immersive fullscreen for Android Kitkat and higher
-//        if (hasFocus && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            ActionBar bar = getSupportActionBar();
-//            if (bar != null) bar.hide();
-//            this.getWindow().getDecorView().setSystemUiVisibility(
-//                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-//        }
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
     }
 
     @Override
@@ -96,7 +82,7 @@ public class WorldActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(World.ARG_WORLD_SERIALIZED, world);
     }
@@ -107,16 +93,13 @@ public class WorldActivity extends AppCompatActivity
         /*
         Retrieve world from previous state or intent
          */
-        Log.d(this, "World activity creating...");
+        Log.d(this, "World activity creating");
         this.world = (World) (savedInstanceState == null
                 ? getIntent().getSerializableExtra(World.ARG_WORLD_SERIALIZED)
                 : savedInstanceState.getSerializable(World.ARG_WORLD_SERIALIZED));
         if (world == null) {
-            Toast.makeText(this, "cannot open: world == null", Toast.LENGTH_SHORT).show();
-            //WTF, try going back to the previous screen by finishing this hopeless activity...
+            Toast.makeText(this, "cannot open world is null", Toast.LENGTH_SHORT).show();
             finish();
-            //Finish does not guarantee codes below won't be executed!
-            //Shit
             return;
         }
 
@@ -126,22 +109,9 @@ public class WorldActivity extends AppCompatActivity
                 Layout
          */
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_world);
-        //Toolbar toolbar = mBinding.bar.toolbar;
-        //assert toolbar != null;
-        //setSupportActionBar(toolbar);
 
         NavigationView navigationView = mBinding.navView;
-        assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
-
-        // Main drawer, quick access to different menus, tools and map-types.
-//        DrawerLayout drawer = mBinding.drawerLayout;
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        assert drawer != null;
-//        drawer.addDrawerListener(toggle);
-//        toggle.syncState();
-
 
         View headerView = navigationView.getHeaderView(0);
         assert headerView != null;
@@ -196,14 +166,11 @@ public class WorldActivity extends AppCompatActivity
         // anonymous global counter of opened worlds
         Log.logFirebaseEvent(this, Log.CustomFirebaseEvent.WORLD_OPEN, bundle);
 
-        Log.d(this, "World activity created");
     }
 
     @Override
     public void onStart() {
-        Log.d(this, "World activity starting...");
         super.onStart();
-        Log.d(this, "World activity started");
     }
 
     @Override
@@ -219,13 +186,10 @@ public class WorldActivity extends AppCompatActivity
         } catch (WorldData.WorldDBException e) {
             this.onFatalDBError(e);
         }
-
-        Log.d(this, "World activity resumed");
     }
 
     @Override
     public void onPause() {
-        Log.d(this, "World activity pausing...");
         super.onPause();
 
         try {
@@ -233,22 +197,16 @@ public class WorldActivity extends AppCompatActivity
         } catch (WorldData.WorldDBException e) {
             e.printStackTrace();
         }
-
-        Log.d(this, "World activity paused");
     }
 
     @Override
     public void onStop() {
-        Log.d(this, "World activity stopping...");
         super.onStop();
-        Log.d(this, "World activity stopped");
     }
 
     @Override
     public void onDestroy() {
-        Log.d(this, "World activity destroying...");
         super.onDestroy();
-        Log.d(this, "World activity destroyed...");
     }
 
     @Override

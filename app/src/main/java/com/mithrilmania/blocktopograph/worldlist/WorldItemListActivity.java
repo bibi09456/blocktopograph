@@ -44,6 +44,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class WorldItemListActivity extends AppCompatActivity {
@@ -159,7 +160,17 @@ public class WorldItemListActivity extends AppCompatActivity {
             worldItemAdapter.enable();
         }
 
+        checkNotWorldFound();
 
+    }
+
+    public void checkNotWorldFound() {
+        TextView text = findViewById(R.id.worlditem_no_world);
+        if (worldItemAdapter.mWorlds.size() == 0) {
+            text.setText(R.string.world_isn_t_found);
+        } else {
+            text.setText("");
+        }
     }
 
     private void onClickCreateWorld() {
@@ -191,6 +202,7 @@ public class WorldItemListActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case REQUEST_EXTERNAL_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
@@ -398,6 +410,7 @@ public class WorldItemListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         worldItemAdapter.loadWorldList();
+        checkNotWorldFound();
     }
 
     public class WorldItemRecyclerViewAdapter extends RecyclerView.Adapter<WorldItemRecyclerViewAdapter.ViewHolder> {
@@ -407,11 +420,11 @@ public class WorldItemListActivity extends AppCompatActivity {
         private boolean disabled;
 
         WorldItemRecyclerViewAdapter() {
-            mWorlds = new ArrayList<>(16);
+            mWorlds = new LinkedList<>();
             disabled = true;
         }
 
-        void enable() {
+        public void enable() {
             disabled = false;
         }
 
@@ -419,33 +432,18 @@ public class WorldItemListActivity extends AppCompatActivity {
             return disabled;
         }
 
-        //returns true if it has loaded a new list of worlds, false otherwise
-        void loadWorldList() {
+        public void loadWorldList() {
             if (disabled) return;
             mWorlds.clear();
             List<File> saveFolders;
             List<String> marks;
-            saveFolders = new ArrayList<>(4);
-            marks = new ArrayList<>(4);
+            saveFolders = new LinkedList<>();
+            marks = new LinkedList<>();
 
             File sd = Environment.getExternalStorageDirectory();
 
-            saveFolders.add(new File(sd, "games/com.mojang/minecraftWorlds"));
+            saveFolders.add(new File(sd, "Android/data/com.mojang.minecraftpe/files/games/com.mojang/minecraftWorlds"));
             marks.add(null);
-
-            //noinspection ResultOfMethodCallIgnored
-            new File(sd, "Android/data").listFiles(
-                    file -> {
-                        if (file.getName().startsWith("com.netease")) {
-                            File worldsFolder = new File(file, "files/minecraftWorlds");
-                            if (worldsFolder.exists()) {
-                                saveFolders.add(worldsFolder);
-                                marks.add(getString(R.string.world_mark_neteas));
-                            }
-                        }
-                        return false;
-                    }
-            );
 
             for (int i = 0, saveFoldersSize = saveFolders.size(); i < saveFoldersSize; i++) {
                 File dir = saveFolders.get(i);
@@ -544,6 +542,7 @@ public class WorldItemListActivity extends AppCompatActivity {
             final TextView mWorldSize;
             final TextView mWorldGamemode;
             final TextView mWorldLastPlayed;
+            final TextView mWorldLastOpenedVersion;
             final TextView mWorldPath;
             World mWorld;
 
@@ -555,9 +554,11 @@ public class WorldItemListActivity extends AppCompatActivity {
                 mWorldSize = view.findViewById(R.id.world_size);
                 mWorldGamemode = view.findViewById(R.id.world_gamemode);
                 mWorldLastPlayed = view.findViewById(R.id.world_last_played);
+                mWorldLastOpenedVersion = view.findViewById(R.id.world_last_opened_version);
                 mWorldPath = view.findViewById(R.id.world_path);
             }
 
+            @NonNull
             @Override
             public String toString() {
                 return super.toString() + " '" + mWorldNameView.getText() + "'";
