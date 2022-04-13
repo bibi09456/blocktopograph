@@ -11,6 +11,7 @@ import com.mithrilmania.blocktopograph.nbt.tags.StringTag;
 import com.mithrilmania.blocktopograph.nbt.tags.Tag;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class ItemTag {
 
@@ -18,7 +19,7 @@ public class ItemTag {
     private ListTag mPages;
 
     ItemTag() {
-        ArrayList<Tag> tags = new ArrayList<>();
+        LinkedList<Tag> tags = new LinkedList<>();
         mContent = new CompoundTag(Keys.INV_TAG, tags);
     }
 
@@ -130,8 +131,8 @@ public class ItemTag {
         return mPages.getValue().size();
     }
 
-    private static void addPage(ArrayList<Tag> list) {
-        ArrayList<Tag> subs = new ArrayList<>(4);
+    private static void addPage(LinkedList<Tag> list) {
+        LinkedList<Tag> subs = new LinkedList<>(new ArrayList<>(4));
         CompoundTag tag = new CompoundTag("", subs);
         setStringEntry(tag, Keys.I_BOOK_PAGES_PHOTONAME, "");
         setStringEntry(tag, Keys.I_BOOK_PAGES_TEXT, "");
@@ -142,10 +143,10 @@ public class ItemTag {
     public CompoundTag getPage(int index) {
         if (!preparePages()) return null;
         if (mPages == null) {
-            mPages = new ListTag(Keys.I_BOOK_PAGES, new ArrayList<>(Math.max(index, 4)));
+            mPages = new ListTag(Keys.I_BOOK_PAGES, new LinkedList<>(new ArrayList<>(Math.max(index, 4))));
             mContent.getValue().add(mPages);
         }
-        ArrayList<Tag> pages = mPages.getValue();
+        LinkedList<Tag> pages = mPages.getValue();
         for (int i = pages.size(); i <= index; i++) addPage(pages);
         Tag tag = pages.get(index);
         if (tag instanceof CompoundTag) return (CompoundTag) tag;
@@ -160,7 +161,7 @@ public class ItemTag {
         Tag tag = page.getChildTagByKey(Keys.I_BOOK_PAGES_CLICK);
         CompoundTag event;
         if (tag == null) {
-            event = new CompoundTag(Keys.I_BOOK_PAGES_CLICK, new ArrayList<>(2));
+            event = new CompoundTag(Keys.I_BOOK_PAGES_CLICK, new LinkedList<>(new ArrayList<>(2)));
             page.getValue().add(event);
         } else {
             if (!(tag instanceof CompoundTag)) return false;

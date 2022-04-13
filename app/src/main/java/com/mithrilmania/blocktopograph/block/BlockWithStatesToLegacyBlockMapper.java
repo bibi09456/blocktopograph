@@ -11,6 +11,7 @@ import com.mithrilmania.blocktopograph.nbt.tags.Tag;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 public class BlockWithStatesToLegacyBlockMapper {
@@ -4792,7 +4793,7 @@ public class BlockWithStatesToLegacyBlockMapper {
             // Already the best we can d for now.
             return null;
         String[] checks = new String[]{"color", "type", "direction"};
-        ArrayList<Tag> tags = oldBlock.getStates().getValue();
+        LinkedList<Tag> tags = oldBlock.getStates().getValue();
         List<Pair<CompoundTag, KnownBlockRepr>> range = new ArrayList<>(list.length);
         range.addAll(Arrays.asList(list));
         for (String check : checks) {

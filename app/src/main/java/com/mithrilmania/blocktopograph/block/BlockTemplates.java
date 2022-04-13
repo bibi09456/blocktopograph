@@ -2,17 +2,16 @@ package com.mithrilmania.blocktopograph.block;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.Streams;
 import com.mithrilmania.blocktopograph.block.icon.NoBlockIcon;
 import com.mithrilmania.blocktopograph.block.icon.TexPathBlockIcon;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 public class BlockTemplates {
 
@@ -27,10 +26,10 @@ public class BlockTemplates {
     }
 
     private static void init() {
-        allTemplates.put("minecraft:air", new BlockTemplate[]{
-                new BlockTemplate(null, new Block.Builder(BlockType.AIR).build(), new TexPathBlockIcon(null), 0x00000000, false)
+        allTemplates.put("minecraft:air", new BlockTemplate[] {
+            new BlockTemplate(null, new Block.Builder(BlockType.AIR).build(), new TexPathBlockIcon(null), 0x00000000, false)
         });
-        allTemplates.put("minecraft:stone", new BlockTemplate[]{
+        allTemplates.put("minecraft:stone", new BlockTemplate[] {
                 new BlockTemplate("stone", new Block.Builder(BlockType.STONE).setProperty("stone_type", "stone").build(), new TexPathBlockIcon("blocks/stone.png"), 0xff464646, false),
                 new BlockTemplate("granite", new Block.Builder(BlockType.STONE).setProperty("stone_type", "granite").build(), new TexPathBlockIcon("blocks/stone_granite.png"), 0xff8c7167, false),
                 new BlockTemplate("granite_smooth", new Block.Builder(BlockType.STONE).setProperty("stone_type", "granite_smooth").build(), new TexPathBlockIcon("blocks/stone_granite_smooth.png"), 0xff946251, false),
@@ -1685,11 +1684,8 @@ public class BlockTemplates {
         return candidates.size() > 0 ? candidates.get(0) : getUnknownBlockTemplate();
     }
 
-    public static Stream<BlockTemplate> getAll() {
-        var stream = Arrays.stream(new BlockTemplate[0]);
-        for (var templates : allTemplates.values())
-            stream = Streams.concat(stream, Arrays.stream(templates));
-        return stream;
+    public static LinkedList<BlockTemplate[]> getAll() {
+        return new LinkedList<BlockTemplate[]>(allTemplates.values());
     }
 
     @NonNull

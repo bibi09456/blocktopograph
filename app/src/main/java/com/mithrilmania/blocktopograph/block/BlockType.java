@@ -307,6 +307,11 @@ public enum BlockType implements Serializable {
         for (var block : BlockType.values()) blockTypes.put(block.name, block);
     }
 
+    BlockType(String name) {
+        this.name = name;
+        this.knownProperties = new BlockProperty[]{};
+    }
+
     BlockType(String name, BlockProperty[] knownProperties) {
         this.name = name;
         this.knownProperties = knownProperties;

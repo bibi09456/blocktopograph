@@ -3,6 +3,7 @@ package com.mithrilmania.blocktopograph.chunk.terrain;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.block.Block;
 import com.mithrilmania.blocktopograph.block.BlockTemplate;
@@ -11,6 +12,9 @@ import com.mithrilmania.blocktopograph.map.Dimension;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class TerrainSubChunk {
 
@@ -26,18 +30,10 @@ public abstract class TerrainSubChunk {
 
     @Nullable
     public static TerrainSubChunk create(@NonNull byte[] rawData) {
+        Logger.getLogger(TerrainSubChunk.class.getName()).log(Level.INFO, Arrays.toString(rawData));
         TerrainSubChunk subChunk;
         ByteBuffer byteBuffer = ByteBuffer.wrap(rawData);
         switch (rawData[0]) {
-//            case 0:
-//            case 2:
-//            case 3:
-//            case 4:
-//            case 5:
-//            case 6:
-//            case 7:
-//                subChunk = new PreV1d2d13TerrainSubChunk(byteBuffer, oldBlockRegistry);
-//                break;
             case 1:
             case 8:
                 subChunk = new V1d2d13TerrainSubChunk(byteBuffer);
@@ -52,15 +48,6 @@ public abstract class TerrainSubChunk {
     public static TerrainSubChunk createEmpty(int preferredVersion) {
         TerrainSubChunk subChunk;
         switch (preferredVersion) {
-            case 0:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-                subChunk = null;
-                break;
             case 1:
             case 8:
                 subChunk = new V1d2d13TerrainSubChunk();

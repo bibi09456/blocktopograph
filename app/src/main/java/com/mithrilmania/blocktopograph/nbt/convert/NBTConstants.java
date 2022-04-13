@@ -3,8 +3,10 @@ package com.mithrilmania.blocktopograph.nbt.convert;
 import com.mithrilmania.blocktopograph.nbt.tags.*;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class NBTConstants {
@@ -85,14 +87,14 @@ public class NBTConstants {
                 case DOUBLE: return new DoubleTag(tagName, 0.0);
                 case BYTE_ARRAY: return new ByteArrayTag(tagName, null);
                 case STRING: return new StringTag(tagName, "");
-                case LIST: return new ListTag(tagName, new ArrayList<Tag>());
-                case COMPOUND: return new CompoundTag(tagName, new ArrayList<Tag>());
+                case LIST: return new ListTag(tagName, new LinkedList<Tag>());
+                case COMPOUND: return new CompoundTag(tagName, new LinkedList<Tag>());
                 default: return null;
             }
         }
 
     }
 
-    public static final Charset CHARSET = Charset.forName("UTF-8");
+    public static final Charset CHARSET = StandardCharsets.UTF_8;
 
 }

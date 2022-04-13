@@ -359,7 +359,6 @@ public final class CreateWorldActivity extends AppCompatActivity {
                 else type = 3 + layers.size();
             } else type = 0;
             params.putInt(Log.ANA_PARAM_CREATE_WORLD_TYPE, type);
-            Log.logFirebaseEvent(activity, Log.CustomFirebaseEvent.CREATE_WORLD_SAVE, params);
             if (aBoolean) {
                 Toast.makeText(activity,
                         activity.getString(R.string.general_done),

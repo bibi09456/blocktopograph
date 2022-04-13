@@ -7,6 +7,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.zip.GZIPInputStream;
 
 public final class NBTInputStream
@@ -127,9 +128,10 @@ public final class NBTInputStream
                 readCount += 4;
 
                 NBTConstants.NBTType childNbtType = NBTConstants.NBTType.typesByID.get(childType);
-                if (childNbtType.id == 0) return new ListTag(name, new ArrayList<Tag>());
+                assert childNbtType != null;
+                if (childNbtType.id == 0) return new ListTag(name, new LinkedList<Tag>());
                 Class<? extends Tag> clazz = childNbtType.tagClazz;
-                ArrayList<Tag> tagList = new ArrayList<>();
+                LinkedList<Tag> tagList = new LinkedList<Tag>();
                 for (int i = 0; i < length; i++) {
                     Tag tag = readTagPayload(childType, "", depth + 1);
                     if ((tag instanceof EndTag)) {
@@ -143,7 +145,7 @@ public final class NBTInputStream
                 return new ListTag(name, tagList);
             }
             case COMPOUND: {
-                ArrayList<Tag> tagMap = new ArrayList<>();
+                LinkedList<Tag> tagMap = new LinkedList<>();
                 for (; ; ) {
                     Tag tag = readTag(depth + 1);
                     if ((tag instanceof EndTag)) return new CompoundTag(name, tagMap);

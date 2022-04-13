@@ -1,15 +1,18 @@
 package com.mithrilmania.blocktopograph.nbt.tags;
 
+import androidx.annotation.NonNull;
+
 import com.mithrilmania.blocktopograph.nbt.convert.NBTConstants;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-public class ListTag extends Tag<ArrayList<Tag>> {
+public class ListTag extends Tag<LinkedList<Tag>> {
 
 
     private static final long serialVersionUID = -4765717626522070446L;
 
-    public ListTag(String name, ArrayList<Tag> value) {
+    public ListTag(String name, LinkedList<Tag> value) {
         super(name, value);
     }
 
@@ -19,12 +22,13 @@ public class ListTag extends Tag<ArrayList<Tag>> {
     }
 
 
+    @NonNull
     public String toString(){
         String name = getName();
         String type = getType().name();
-        ArrayList<Tag> value = getValue();
+        LinkedList<Tag> value = getValue();
         StringBuilder bldr = new StringBuilder();
-        bldr.append(type == null ? "?" : ("TAG_" + type))
+        bldr.append("TAG_").append(type)
                 .append(name == null ? "(?)" : ("(" + name + ")"));
 
         if(value != null) {
@@ -47,7 +51,7 @@ public class ListTag extends Tag<ArrayList<Tag>> {
     @Override
     public ListTag getDeepCopy() {
         if(value != null){
-            ArrayList<Tag> copy = new ArrayList<>();
+            LinkedList<Tag> copy = new LinkedList<Tag>();
             for(Tag tag : value){
                 copy.add(tag.getDeepCopy());
             }

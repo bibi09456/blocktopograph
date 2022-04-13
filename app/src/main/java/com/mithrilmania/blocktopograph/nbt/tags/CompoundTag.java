@@ -1,15 +1,18 @@
 package com.mithrilmania.blocktopograph.nbt.tags;
 
+import androidx.annotation.NonNull;
+
 import com.mithrilmania.blocktopograph.nbt.convert.NBTConstants;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-public class CompoundTag extends Tag<ArrayList<Tag>> {
+public class CompoundTag extends Tag<LinkedList<Tag>> {
 
     private static final long serialVersionUID = 4540757946052775740L;
 
-    public CompoundTag(String name, ArrayList<Tag> value) {
+    public CompoundTag(String name, LinkedList<Tag> value) {
         super(name, value);
     }
 
@@ -28,12 +31,13 @@ public class CompoundTag extends Tag<ArrayList<Tag>> {
         return null;
     }
 
+    @NonNull
     public String toString(){
         String name = getName();
         String type = getType().name();
-        ArrayList<Tag> value = getValue();
+        LinkedList<Tag> value = getValue();
         StringBuilder bldr = new StringBuilder();
-        bldr.append(type == null ? "?" : ("TAG_" + type))
+        bldr.append("TAG_").append(type)
             .append(name == null ? "(?)" : ("(" + name + ")"));
 
         if(value != null) {
@@ -56,7 +60,7 @@ public class CompoundTag extends Tag<ArrayList<Tag>> {
     @Override
     public CompoundTag getDeepCopy() {
         if(value != null){
-            ArrayList<Tag> copy = new ArrayList<>();
+            LinkedList<Tag> copy = new LinkedList<Tag>();
             for(Tag tag : value){
                 copy.add(tag.getDeepCopy());
             }

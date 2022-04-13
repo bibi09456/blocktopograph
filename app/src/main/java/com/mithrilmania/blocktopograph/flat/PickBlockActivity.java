@@ -2,6 +2,7 @@ package com.mithrilmania.blocktopograph.flat;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,6 +27,7 @@ import com.mithrilmania.blocktopograph.util.UiUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -87,6 +90,7 @@ public final class PickBlockActivity extends AppCompatActivity {
             if (index2 <= index1) index2 = index1;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected Void doInBackground(Void... voids) {
             PickBlockActivity activity = thiz.get();
@@ -112,11 +116,13 @@ public final class PickBlockActivity extends AppCompatActivity {
             } catch (NumberFormatException e) {
                 num = -1;
             }
-            for (Iterator<BlockTemplate> it = BlockTemplates.getAll().iterator(); it.hasNext(); ) {
-                BlockTemplate b = it.next();
-                if (
-                        (b.getBlock().getName().contains(text)))
-                    list.add(b);
+            for (Iterator<BlockTemplate[]> it = BlockTemplates.getAll().iterator(); it.hasNext(); ) {
+                BlockTemplate[] ba = it.next();
+                for (Iterator<BlockTemplate> it2 = Arrays.stream(ba).iterator(); it2.hasNext();) {
+                    BlockTemplate b = it2.next();
+                    if ((b.getBlock().getName().contains(text)))
+                        list.add(b);
+                }
             }
             int position = -1;
             if (olds != null) for (BlockTemplate b : olds) {

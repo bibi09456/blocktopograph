@@ -1139,8 +1139,8 @@ public enum KnownBlockRepr implements NamedBitmapProviderHandle, NamedBitmapProv
 
     static {
         blockMap = new SparseArray<>();
-        nameService = new HashMap<>(256);
-        resolver = new HashMap<>(256);
+        nameService = new HashMap<>(1024);
+        resolver = new HashMap<>(1024);
         KnownBlockRepr[] subMap;
         KnownBlockRepr[] subMap2;
         for (KnownBlockRepr b : KnownBlockRepr.values()) {
@@ -1183,20 +1183,18 @@ public enum KnownBlockRepr implements NamedBitmapProviderHandle, NamedBitmapProv
         return byDataName.get(dataName);
     }
 
-    public static void loadBitmaps(AssetManager assetManager) throws IOException {
-        if (Math.random() < 1) return;
-        for (KnownBlockRepr b : KnownBlockRepr.values()) {
-            if (b.bitmap == null && b.texPath != null) {
-                try {
-                    b.bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(assetManager.open(b.texPath)), 32, 32, false);
-                } catch (FileNotFoundException e) {
-                    //TODO file-paths were generated from block names; some do not actually exist...
-                    //Log.w("File not found! "+b.texPath);
-                } catch (Exception e) {
-                    Log.d(KnownBlockRepr.class, e);
-                }
-            }
-        }
+    public static void loadBitmaps(AssetManager assetManager) {
+//        for (KnownBlockRepr b : KnownBlockRepr.values()) {
+//            if (b.bitmap == null && b.texPath != null) {
+//                try {
+//                    b.bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(assetManager.open(b.texPath)), 32, 32, false);
+//                } catch (FileNotFoundException e) {
+//                    //TODO file-paths were generated from block names; some do not actually exist...
+//                } catch (Exception e) {
+//                    Log.d(KnownBlockRepr.class, e);
+//                }
+//            }
+//        }
     }
 
     @NonNull

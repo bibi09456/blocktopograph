@@ -45,6 +45,7 @@ import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class EditorFragment extends Fragment {
@@ -314,7 +315,7 @@ public class EditorFragment extends Fragment {
                                                     return;
                                                 } else {
 
-                                                    ArrayList<Tag> content;
+                                                    LinkedList<Tag> content;
                                                     switch (parent.getType()) {
                                                         case LIST: {
                                                             content = ((ListTag) parent).getValue();
@@ -352,7 +353,7 @@ public class EditorFragment extends Fragment {
                                                     return;
                                                 }
 
-                                                ArrayList<Tag> content;
+                                                LinkedList<Tag> content;
                                                 switch (self.getType()) {
                                                     case LIST: {
                                                         content = ((ListTag) self).getValue();
@@ -372,7 +373,7 @@ public class EditorFragment extends Fragment {
                                                     }
                                                 }
                                                 if (content == null) {
-                                                    content = new ArrayList<>();
+                                                    content = new LinkedList<>();
                                                     self.setValue(content);
                                                 }
 
@@ -392,7 +393,7 @@ public class EditorFragment extends Fragment {
                                                     return;
                                                 }
 
-                                                ArrayList<Tag> content;
+                                                LinkedList<Tag> content;
                                                 switch (parent.getType()) {
                                                     case LIST: {
                                                         content = ((ListTag) parent).getValue();
@@ -499,7 +500,7 @@ public class EditorFragment extends Fragment {
                                                                 NBTConstants.NBTType nbtType = NBTConstants.NBTType.editorOptions_asType[spinnerIndex];
 
 
-                                                                ArrayList<Tag> content;
+                                                                LinkedList<Tag> content;
                                                                 if (self instanceof CompoundTag) {
 
                                                                     content = ((CompoundTag) self).getValue();
@@ -513,7 +514,7 @@ public class EditorFragment extends Fragment {
                                                                 } else return;//WTF?
 
                                                                 if (content == null) {
-                                                                    content = new ArrayList<>();
+                                                                    content = new LinkedList<>();
                                                                     self.setValue(content);
                                                                 }
 

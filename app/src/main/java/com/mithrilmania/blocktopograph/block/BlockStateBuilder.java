@@ -11,13 +11,14 @@ import com.mithrilmania.blocktopograph.nbt.tags.StringTag;
 import com.mithrilmania.blocktopograph.nbt.tags.Tag;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class BlockStateBuilder {
 
-    private ArrayList<Tag> tags;
+    private LinkedList<Tag> tags;
 
     public BlockStateBuilder() {
-        tags = new ArrayList<>();
+        tags = new LinkedList<Tag>();
     }
 
     @NonNull
@@ -60,7 +61,6 @@ public class BlockStateBuilder {
 
     @NonNull
     public BlockStateBuilder addProperty(String name, String value) {
-        Tag tag;
         tags.add(new StringTag(name, value));
         return this;
     }

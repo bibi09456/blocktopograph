@@ -475,11 +475,7 @@ public class MapFragment extends Fragment {
             Log.d(this, e);
         }
 
-        try {
-            KnownBlockRepr.loadBitmaps(activity.getAssets());
-        } catch (IOException e) {
-            Log.d(this, e);
-        }
+        KnownBlockRepr.loadBitmaps(activity.getAssets());
         try {
             CustomIcon.loadCustomBitmaps(activity.getAssets());
         } catch (IOException e) {

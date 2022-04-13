@@ -1,8 +1,10 @@
 package com.mithrilmania.blocktopograph.chunk.terrain;
 
+import android.os.Build;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -23,7 +25,12 @@ import com.mithrilmania.blocktopograph.nbt.tags.ByteTag;
 import com.mithrilmania.blocktopograph.nbt.tags.CompoundTag;
 import com.mithrilmania.blocktopograph.nbt.tags.IntTag;
 import com.mithrilmania.blocktopograph.nbt.tags.StringTag;
+import com.mithrilmania.blocktopograph.nbt.tags.Tag;
 import com.mithrilmania.blocktopograph.util.LittleEndianOutputStream;
+
+import net.lingala.zip4j.io.inputstream.ZipInputStream;
+
+import org.checkerframework.checker.units.qual.C;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,10 +40,12 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.zip.ZipOutputStream;
 
 public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
 
@@ -391,26 +400,31 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
                 nos.writeTag(serializeBlock(palette.get(j)));
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         private static CompoundTag serializeBlock(@NonNull Block block) {
-            return new CompoundTag(PALETTE_KEY_ROOT, Lists.newArrayList(
-                    new StringTag(PALETTE_KEY_NAME, block.getName()),
-                    new CompoundTag(PALETTE_KEY_STATES, new ArrayList<>(Streams.concat(Streams.zip(
+            StringTag blockName = new StringTag(PALETTE_KEY_NAME, block.getName());
+            CompoundTag blockStates = new CompoundTag(PALETTE_KEY_STATES, new LinkedList<Tag>(
+                    Streams.concat(Streams.zip(
                             Arrays.stream(block.getType().getKnownProperties()).map(BlockProperty::getName),
                             Arrays.stream(block.getKnownProperties()), Maps::immutableEntry).filter(Objects::nonNull),
-                            block.getCustomProperties().entrySet().stream()).map(
-                            (entry) -> {
-                                var name = entry.getKey();
-                                var val = entry.getValue();
-                                if (val instanceof Byte) return new ByteTag(name, (Byte) val);
-                                else if (val instanceof Integer)
-                                    return new IntTag(name, (Integer) val);
-                                else if (val instanceof String)
-                                    return new StringTag(name, (String) val);
-                                else
-                                    throw new RuntimeException("block state with unsupported type");
-                            }).collect(Collectors.toList()))),
-                    new IntTag(PALETTE_KEY_VERSION, 2012)
-            ));
+                            block.getCustomProperties().entrySet().stream()).map((entry) -> {
+                                    var name = entry.getKey();
+                                    var val = entry.getValue();
+                                    if (val instanceof Byte) return new ByteTag(name, (Byte) val);
+                                    else if (val instanceof Integer)
+                                        return new IntTag(name, (Integer) val);
+                                    else if (val instanceof String)
+                                        return new StringTag(name, (String) val);
+                                    else
+                                        throw new RuntimeException("block state with unsupported type");
+                                }).collect(Collectors.toList())
+                ));
+            IntTag blockVersion = new IntTag(PALETTE_KEY_VERSION, 2012);
+            LinkedList<Tag> compoundTagValue = new LinkedList<Tag>();
+            compoundTagValue.add(blockName);
+            compoundTagValue.add(blockStates);
+            compoundTagValue.add(blockVersion);
+            return new CompoundTag(PALETTE_KEY_ROOT, compoundTagValue);
         }
 
         private static Block deserializeBlock(@NonNull CompoundTag tag) {

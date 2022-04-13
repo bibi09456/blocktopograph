@@ -8,6 +8,7 @@ import com.mithrilmania.blocktopograph.nbt.tags.Tag;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class OldBlock implements Serializable {
 
@@ -43,7 +44,7 @@ public class OldBlock implements Serializable {
 
     OldBlock(@NonNull OldBlockType oldBlockType, @NonNull KnownBlockRepr legacyBlock, int version) {
         this.oldBlockType = oldBlockType;
-        this.states = new CompoundTag("states", new ArrayList<>());
+        this.states = new CompoundTag("states", new LinkedList<Tag>());
         this.version = version;
         this.legacyBlock = legacyBlock;
     }

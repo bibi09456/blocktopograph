@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class World implements Serializable {
 
@@ -124,7 +125,7 @@ public class World implements Serializable {
             }
             {
                 Tag tag = level.getChildTagByKey(KEY_LAST_VERSION);
-                ArrayList<Tag> ver;
+                LinkedList<Tag> ver;
                 if (!(tag instanceof ListTag)) ver = null;
                 else ver = ((ListTag) tag).getValue();
                 StringBuilder sb = new StringBuilder();
@@ -138,7 +139,7 @@ public class World implements Serializable {
             }
             {
                 Tag tag = level.getChildTagByKey(KEY_MINIMUM_VERSION);
-                ArrayList<Tag> ver;
+                LinkedList<Tag> ver;
                 if (!(tag instanceof ListTag)) ver = null;
                 else ver = ((ListTag) tag).getValue();
                 StringBuilder sb = new StringBuilder();

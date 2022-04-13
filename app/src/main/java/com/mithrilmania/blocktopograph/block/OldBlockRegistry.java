@@ -3,9 +3,11 @@ package com.mithrilmania.blocktopograph.block;
 import androidx.annotation.NonNull;
 
 import com.mithrilmania.blocktopograph.nbt.tags.CompoundTag;
+import com.mithrilmania.blocktopograph.nbt.tags.Tag;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class OldBlockRegistry {
@@ -41,7 +43,7 @@ public class OldBlockRegistry {
 
     @NonNull
     public OldBlock createBlock(@NonNull String name) {
-        return new OldBlock(getBlockType(name), new CompoundTag("states", new ArrayList<>()), 3841);
+        return new OldBlock(getBlockType(name), new CompoundTag("states", new LinkedList<Tag>()), 3841);
     }
 
     @NonNull

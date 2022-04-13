@@ -41,6 +41,7 @@ import com.mithrilmania.blocktopograph.nbt.tags.Tag;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class WorldActivity extends AppCompatActivity
@@ -675,13 +676,13 @@ public class WorldActivity extends AppCompatActivity
 
         //make a copy first, the user might not want to save changed tags.
         final CompoundTag workCopy = world.getLevel().getDeepCopy();
-        final ArrayList<Tag> workCopyContents;
+        final LinkedList<Tag> workCopyContents;
         final String contentTitle;
         if (subTagName == null) {
             workCopyContents = workCopy.getValue();
             contentTitle = "level.dat";
         } else {
-            workCopyContents = new ArrayList<>();
+            workCopyContents = new LinkedList<>();
             Tag subTag = workCopy.getChildTagByKey(subTagName);
             if (subTag == null) return null;
             workCopyContents.add(subTag);
