@@ -43,7 +43,7 @@ public enum Version {
 
     @NonNull
     public static Version getVersion(@Nullable byte[] data) {
-        //Log.d("Data version: "+ ConvertUtil.bytesToHexStr(data));
+        //LogActivity.d("Data version: "+ ConvertUtil.bytesToHexStr(data));
 
         //`data` is supposed to be one byte,
         // but it might grow to contain more data later on, or larger version ids.

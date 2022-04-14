@@ -3,11 +3,9 @@ package com.mithrilmania.blocktopograph.chunk.terrain;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.block.Block;
 import com.mithrilmania.blocktopograph.block.BlockTemplate;
-import com.mithrilmania.blocktopograph.block.OldBlock;
 import com.mithrilmania.blocktopograph.map.Dimension;
 
 import java.io.IOException;

@@ -1,9 +1,11 @@
 package com.mithrilmania.blocktopograph;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.util.LruCache;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.litl.leveldb.DB;
 import com.litl.leveldb.Iterator;
@@ -17,6 +19,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**
@@ -29,8 +32,8 @@ public class WorldData {
 
     public DB db;
 
-    private WeakReference<World> world;
-    private LruCache<Key, Chunk> chunks = new ChunkCache(this, 256);
+    private final WeakReference<World> world;
+    private final LruCache<Key, Chunk> chunks = new ChunkCache(this, 256);
     public final OldBlockRegistry mOldBlockRegistry;
 
     public WorldData(World world) {
@@ -49,22 +52,22 @@ public class WorldData {
     }
 
     private static byte[] getChunkDataKey(int x, int z, ChunkTag type, Dimension dimension, byte subChunk, boolean asSubChunk) {
+        byte[] key;
         if (dimension == Dimension.OVERWORLD) {
-            byte[] key = new byte[asSubChunk ? 10 : 9];
+            key = new byte[asSubChunk ? 10 : 9];
             System.arraycopy(getReversedBytes(x), 0, key, 0, 4);
             System.arraycopy(getReversedBytes(z), 0, key, 4, 4);
             key[8] = type.dataID;
             if (asSubChunk) key[9] = subChunk;
-            return key;
         } else {
-            byte[] key = new byte[asSubChunk ? 14 : 13];
+            key = new byte[asSubChunk ? 14 : 13];
             System.arraycopy(getReversedBytes(x), 0, key, 0, 4);
             System.arraycopy(getReversedBytes(z), 0, key, 4, 4);
             System.arraycopy(getReversedBytes(dimension.id), 0, key, 8, 4);
             key[12] = type.dataID;
             if (asSubChunk) key[13] = subChunk;
-            return key;
         }
+        return key;
     }
 
     private static byte[] getReversedBytes(int i) {
@@ -94,18 +97,20 @@ public class WorldData {
                 throw new WorldDataLoadException("World-db folder is not writable! World-db folder: " + dbFile.getAbsolutePath());
         }
 
-        Log.d(this, "WorldFolder: " + world.worldFolder.getAbsolutePath());
-        Log.d(this, "WorldFolder permissions: read: " + dbFile.canRead() + " write: " + dbFile.canWrite());
+        LogActivity.logInfo(this.getClass(), "WorldFolder: " + world.worldFolder.getAbsolutePath());
+        LogActivity.logInfo(this.getClass(), "WorldFolder permissions: read: " + dbFile.canRead() + " write: " + dbFile.canWrite());
 
         if (dbFile.listFiles() == null)
             throw new WorldDataLoadException("Failed loading world-db: cannot list files in worldfolder");
 
-        for (File dbEntry : dbFile.listFiles()) {
-            Log.d(this, "File in db: " + dbEntry.getAbsolutePath());
+        for (File dbEntry : Objects.requireNonNull(dbFile.listFiles())) {
+            LogActivity.logInfo(this.getClass(), "File in db: " + dbEntry.getAbsolutePath());
         }
-        this.db = new DB(dbFile);
-
-
+        try {
+            this.db = new DB(dbFile);
+        } catch (Exception e) {
+            LogActivity.logError(this.getClass(), e);
+        }
     }
 
     //open db to make it available for this app
@@ -117,8 +122,7 @@ public class WorldData {
             try {
                 this.db.open();
             } catch (Exception e) {
-
-                throw new WorldDBException("DB could not be opened! " + e.getMessage());
+                LogActivity.logError(this.getClass(), e);
             }
         }
 
@@ -143,7 +147,7 @@ public class WorldData {
         this.openDB();
 
         byte[] chunkKey = getChunkDataKey(x, z, type, dimension, subChunk, asSubChunk);
-        //Log.d("Getting cX: "+x+" cZ: "+z+ " with key: "+bytesToHex(chunkKey, 0, chunkKey.length));
+        LogActivity.logInfo(this.getClass(), "Getting cX: "+x+" cZ: "+z+ " with key: "+bytesToHex(chunkKey, 0, chunkKey.length));
         return db.get(chunkKey);
     }
 
@@ -165,6 +169,7 @@ public class WorldData {
         db.delete(getChunkDataKey(x, z, type, dimension, subChunk, asSubChunk));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void removeFullChunk(int x, int z, Dimension dimension) {
         var iterator = db.iterator();
         int count = 0;
@@ -223,7 +228,7 @@ public class WorldData {
 
     private static class ChunkCache extends LruCache<Key, Chunk> {
 
-        private WeakReference<WorldData> worldData;
+        private final WeakReference<WorldData> worldData;
 
         ChunkCache(WorldData worldData, int maxSize) {
             super(maxSize);
@@ -235,7 +240,7 @@ public class WorldData {
             try {
                 oldValue.save();
             } catch (Exception e) {
-                Log.d(this, e);
+                LogActivity.logError(this.getClass(), e);
             }
         }
 

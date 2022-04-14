@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.mithrilmania.blocktopograph.BackupActivity;
-import com.mithrilmania.blocktopograph.Log;
+import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.WorldActivity;
@@ -100,7 +100,7 @@ public class WorldItemDetailFragment extends Fragment implements View.OnClickLis
                 binding.setPath(mWorld.levelFile.getAbsolutePath());
             }
         } catch (Exception e) {
-            Log.d(this, e);
+            LogActivity.logError(this.getClass(), e);
         }
 
         binding.fabOpenWorld.setOnClickListener(view -> {

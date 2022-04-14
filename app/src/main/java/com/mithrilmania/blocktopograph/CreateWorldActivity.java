@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment;
 
 import com.litl.leveldb.DB;
 import com.mithrilmania.blocktopograph.block.BlockTemplates;
-import com.mithrilmania.blocktopograph.block.ListingBlock;
 import com.mithrilmania.blocktopograph.databinding.ActivityCreateWorldBinding;
 import com.mithrilmania.blocktopograph.flat.EditFlatFragment;
 import com.mithrilmania.blocktopograph.flat.FlatLayers;
@@ -70,7 +69,6 @@ public final class CreateWorldActivity extends AppCompatActivity {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_create_world);
         //mBinding.scroll.post(()->mBinding.scroll.doOverScroll());
         mToolTipsManager = new ToolTipsManager();
-        Log.logFirebaseEvent(this, Log.CustomFirebaseEvent.CREATE_WORLD_OPEN);
 
         setBiomeToView(Biome.JUNGLE);
     }
@@ -200,7 +198,7 @@ public final class CreateWorldActivity extends AppCompatActivity {
                 InputStream is = ass.open("dats/" + verStr + ".dat", ACCESS_STREAMING);
                 rootTag = LevelDataConverter.read(is);
             } catch (Exception e) {
-                Log.d(this, e);
+                LogActivity.logError(this.getClass(), e);
             }
             if (rootTag == null) return false;
 
@@ -251,7 +249,7 @@ public final class CreateWorldActivity extends AppCompatActivity {
             try {
                 LevelDataConverter.write(rootTag, McUtil.getLevelDatFile(wDir));
             } catch (IOException e) {
-                Log.d(this, e);
+                LogActivity.logError(this.getClass(), e);
                 return false;
             }
 
@@ -340,7 +338,7 @@ public final class CreateWorldActivity extends AppCompatActivity {
                 db.put("~local_player".getBytes(NBTConstants.CHARSET), baos.toByteArray());
                 db.close();
             } catch (Exception e) {
-                Log.d(this, e);
+                LogActivity.logError(this.getClass(), e);
                 return false;
             }
 
@@ -352,13 +350,6 @@ public final class CreateWorldActivity extends AppCompatActivity {
             assert aBoolean != null;
             Activity activity = thiz.get();
             if (activity == null) return;
-            Bundle params = new Bundle();
-            int type;
-            if (aBoolean) {
-                if (mIsVanillaFlat) type = 1;
-                else type = 3 + layers.size();
-            } else type = 0;
-            params.putInt(Log.ANA_PARAM_CREATE_WORLD_TYPE, type);
             if (aBoolean) {
                 Toast.makeText(activity,
                         activity.getString(R.string.general_done),

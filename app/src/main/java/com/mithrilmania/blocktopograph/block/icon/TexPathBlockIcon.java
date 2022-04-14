@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.mithrilmania.blocktopograph.Log;
+import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.block.KnownBlockRepr;
 
 import java.io.FileNotFoundException;
@@ -38,7 +38,7 @@ public class TexPathBlockIcon extends BlockIcon {
         } catch (FileNotFoundException e) {
             //TODO file-paths were generated from block names; some do not actually exist...
         } catch (Exception e) {
-            Log.d(KnownBlockRepr.class, e);
+            LogActivity.logError(KnownBlockRepr.class, e);
         }
         return null;
     }

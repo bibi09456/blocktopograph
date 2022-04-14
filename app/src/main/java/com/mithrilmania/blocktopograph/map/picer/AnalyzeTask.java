@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 
 import com.litl.leveldb.DB;
 import com.litl.leveldb.Iterator;
-import com.mithrilmania.blocktopograph.Log;
+import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.WorldData;
@@ -158,8 +158,8 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
             }
             iterator.close();
             if (cancelled) return null;
-        } catch (Throwable e) {
-            Log.d(this, e);
+        } catch (Exception e) {
+            LogActivity.logError(this.getClass(), e);
             return null;
         }
 

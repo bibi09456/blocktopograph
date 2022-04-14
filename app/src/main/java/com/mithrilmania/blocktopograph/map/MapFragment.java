@@ -40,7 +40,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.mithrilmania.blocktopograph.Log;
+import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.WorldActivityInterface;
@@ -81,6 +81,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -152,7 +153,6 @@ public class MapFragment extends Fragment {
         FragmentActivity activity = getActivity();
         if (activity == null) return;
         activity.setTitle(world.getWorldDisplayName());
-        Log.logFirebaseEvent(activity, Log.CustomFirebaseEvent.MAPFRAGMENT_OPEN);
     }
 
     @Override
@@ -208,9 +208,9 @@ public class MapFragment extends Fragment {
 //                for (int z = 0; z < 16; z++)
 //                    chunk.setBlock(0, 6, z, 0, KnownBlockRepr.B_5_0_PLANKS_OAK.getRuntimeId());
 //                chunk.save();//world.getWorldData(), 0, 0, Dimension.OVERWORLD, 1);
-//                Log.d(this, "ok");
+//                LogActivity.d(this, "ok");
 //            } catch (Exception e) {
-//                Log.d(this, e);
+//                LogActivity.d(this, e);
 //            }
 //            return;
 //        }
@@ -232,12 +232,11 @@ public class MapFragment extends Fragment {
             if (playerPos.dimension != worldProvider.getDimension()) {
                 worldProvider.changeMapType(playerPos.dimension.defaultMapType, playerPos.dimension);
             }
-            Log.logFirebaseEvent(activity, Log.CustomFirebaseEvent.GPS_LOCATE);
 
             frameTo((double) playerPos.x, (double) playerPos.z);
 
         } catch (Exception e) {
-            Log.d(this, e);
+            LogActivity.logError(this.getClass(), e);
             Snackbar.make(view, R.string.failed_find_player, Snackbar.LENGTH_LONG)
                     .show();
         }
@@ -272,12 +271,10 @@ public class MapFragment extends Fragment {
                 worldProvider.changeMapType(spawnPos.dimension.defaultMapType, spawnPos.dimension);
             }
 
-            Log.logFirebaseEvent(activity, Log.CustomFirebaseEvent.GPS_LOCATE);
-
             frameTo((double) spawnPos.x, (double) spawnPos.z);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogActivity.logWarn(this.getClass(), e);
             Snackbar.make(view, R.string.failed_find_spawn, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         }
@@ -422,7 +419,7 @@ public class MapFragment extends Fragment {
         final Activity activity = getActivity();
 
         if (activity == null) {
-            Log.e(this, new Exception("MapFragment: activity is null, cannot set worldProvider!"));
+            LogActivity.logError(this.getClass(), new Exception("MapFragment: activity is null, cannot set worldProvider!"));
             return null;
         }
 
@@ -472,14 +469,14 @@ public class MapFragment extends Fragment {
         try {
             Entity.loadEntityBitmaps(activity.getAssets());
         } catch (IOException e) {
-            Log.d(this, e);
+            LogActivity.logWarn(this.getClass(), e);
         }
 
         KnownBlockRepr.loadBitmaps(activity.getAssets());
         try {
             CustomIcon.loadCustomBitmaps(activity.getAssets());
         } catch (IOException e) {
-            Log.d(this, e);
+            LogActivity.logWarn(this.getClass(), e);
         }
 
         //set the map-type
@@ -552,8 +549,8 @@ public class MapFragment extends Fragment {
         try {
 
             DimensionVector3<Float> playerPos = world.getPlayerPos();
-            float x = playerPos.x, y = playerPos.y, z = playerPos.z;
-            Log.d(this, "Placed player marker at: " + x + ";" + y + ";" + z + " [" + playerPos.dimension.name + "]");
+            float x = Objects.requireNonNull(playerPos).x, y = playerPos.y, z = playerPos.z;
+            LogActivity.logInfo(this.getClass(), "Placed player marker at: " + x + ";" + y + ";" + z + " [" + playerPos.dimension.name + "]");
             localPlayerMarker = new AbstractMarker((int) x, (int) y, (int) z,
                     playerPos.dimension, new CustomNamedBitmapProvider(Entity.PLAYER, "~local_player"), false);
             this.staticMarkers.add(localPlayerMarker);
@@ -568,8 +565,7 @@ public class MapFragment extends Fragment {
             framedToPlayer = true;
 
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.d(this, "Failed to place player marker. " + e.toString());
+            LogActivity.logError(this.getClass(), "Failed to place player marker. " + e.toString());
         }
 
 
@@ -669,7 +665,7 @@ public class MapFragment extends Fragment {
                                             } else throw new Exception("Failed saving player");
 
                                         } catch (Exception e) {
-                                            Log.d(this, e.toString());
+                                            LogActivity.logError(this.getClass(), e);
 
                                             Snackbar.make(mBinding.tileView, R.string.failed_teleporting_player,
                                                     Snackbar.LENGTH_LONG)
@@ -951,7 +947,7 @@ public class MapFragment extends Fragment {
 
         final View container = activity.findViewById(R.id.world_content);
         if (container == null) {
-            Log.d(this, "CANNOT FIND MAIN CONTAINER, WTF");
+            LogActivity.logWarn(this.getClass(), "CANNOT FIND MAIN CONTAINER, WTF");
             return;
         }
 
@@ -1005,7 +1001,6 @@ public class MapFragment extends Fragment {
             setUpSelectionMenu();
             Activity activity = getActivity();
             if (activity != null) {
-                Log.logFirebaseEvent(activity, Log.CustomFirebaseEvent.SELECTION);
                 activity.getPreferences(Context.MODE_PRIVATE).edit()
                         .putBoolean(PREF_KEY_HAS_USED_SELECTION, true).apply();
             }
@@ -1018,7 +1013,7 @@ public class MapFragment extends Fragment {
             chunk = world.getWorldData()
                     .getChunk(chunkXint, chunkZint, dim);
         } catch (Exception e) {
-            Log.d(this, e);
+            LogActivity.logError(this.getClass(), e);
             Toast.makeText(getContext(), R.string.error_could_not_open_world, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -1559,7 +1554,6 @@ public class MapFragment extends Fragment {
                                             .setAction("Action", null).show();
 
                                     WorldActivityInterface worldProvider = owner.get().worldProvider.get();
-                                    Log.logFirebaseEvent(activity.get(), Log.CustomFirebaseEvent.GPS_LOCATE);
 
                                     if (playerPos.dimension != worldProvider.getDimension()) {
                                         worldProvider.changeMapType(playerPos.dimension.defaultMapType, playerPos.dimension);

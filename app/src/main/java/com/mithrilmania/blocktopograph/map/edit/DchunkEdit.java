@@ -1,6 +1,6 @@
 package com.mithrilmania.blocktopograph.map.edit;
 
-import com.mithrilmania.blocktopograph.Log;
+import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
 
 public class DchunkEdit implements EditTarget.ChunkBasedEdit {
@@ -19,7 +19,7 @@ public class DchunkEdit implements EditTarget.ChunkBasedEdit {
             chunk.deleteThis();
         } catch (Exception e) {
             if (exceptionCount < MAX_EXCEPTION) {
-                Log.d(this, e);
+                LogActivity.logWarn(this.getClass(), e);
                 exceptionCount++;
             }
             return -1;

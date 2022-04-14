@@ -26,7 +26,6 @@ import com.mithrilmania.blocktopograph.util.math.DimensionVector3;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class World implements Serializable {
@@ -100,6 +99,14 @@ public class World implements Serializable {
 
         LongTag seed = (LongTag) this.level.getChildTagByKey("RandomSeed");
         return seed == null ? 0 : seed.getValue();
+    }
+
+    public String getMinClientVersion() {
+        Tag tag = level.getChildTagByKey(KEY_INVENTORY_VERSION);
+        String ver;
+        if (!(tag instanceof StringTag)) ver = null;
+        else ver = ((StringTag) tag).getValue();
+        return ver;
     }
 
     @Nullable
@@ -183,7 +190,7 @@ public class World implements Serializable {
             }
             return bundle;
         } catch (Exception e) {
-            Log.e(this, e);
+            LogActivity.logError(this.getClass(), e);
             return null;
         }
     }
@@ -221,7 +228,7 @@ public class World implements Serializable {
                     dimension);
 
         } catch (Exception e) {
-            Log.d(this, e);
+            LogActivity.logError(this.getClass(), e);
             Exception e2 = new Exception("Could not find " + dbKey);
             e2.setStackTrace(e.getStackTrace());
             throw e2;
@@ -233,14 +240,14 @@ public class World implements Serializable {
         try {
             WorldData wData = getWorldData();
             wData.openDB();
-            byte[] data = wData.db.get(World.SpecialDBEntryType.LOCAL_PLAYER.keyBytes);
+            byte[] data = wData.db.get(SpecialDBEntryType.LOCAL_PLAYER.keyBytes);
 
             final CompoundTag player = data != null
                     ? (CompoundTag) DataConverter.read(data).get(0)
                     : (CompoundTag) getLevel().getChildTagByKey("Player");
 
             if (player == null) {
-                Log.d(this, "No local player. A server world?");
+                LogActivity.logInfo(this.getClass(), "No local player. A server world?");
                 return null;
             }
 
@@ -255,7 +262,7 @@ public class World implements Serializable {
                     (float) posVec.getValue().get(2).getValue(),
                     dimension);
         } catch (Exception e) {
-            Log.d(this, e);
+            LogActivity.logError(this.getClass(), e);
             return null;
         }
     }
@@ -274,7 +281,7 @@ public class World implements Serializable {
             }
             return new DimensionVector3<>(spawnX, spawnY, spawnZ, Dimension.OVERWORLD);
         } catch (Exception e) {
-            Log.d(this, e);
+            LogActivity.logError(this.getClass(), e);
             throw new Exception("Could not find spawn");
         }
     }
@@ -307,7 +314,7 @@ public class World implements Serializable {
 
     public void pause() throws WorldData.WorldDBException {
         if (mHaveBackgroundJob)
-            Log.d(this, "User is doing background job with the app really in background!");
+            LogActivity.logInfo(this.getClass(), "User is doing background job with the app really in background!");
         else
             closeDown();
     }
@@ -333,14 +340,14 @@ public class World implements Serializable {
                 byte[] key = it.getKey();
                 byte[] value = it.getValue();
                 /*if(key.length == 9 && key[8] == RegionDataType.TERRAIN.dataID) */
-                Log.d(this, "key: " + new String(key) + " key in Hex: " + WorldData.bytesToHex(key, 0, key.length) + " size: " + value.length);
+                LogActivity.logInfo(this.getClass(), "key: " + new String(key) + " key in Hex: " + WorldData.bytesToHex(key, 0, key.length) + " size: " + value.length);
 
             }
 
             it.close();
 
         } catch (WorldData.WorldDBException e) {
-            e.printStackTrace();
+            LogActivity.logError(this.getClass(), e);
         }
     }
 

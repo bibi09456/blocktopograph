@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import com.mithrilmania.blocktopograph.Log;
+import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.WorldActivityInterface;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
 import com.mithrilmania.blocktopograph.chunk.NBTChunkData;
@@ -98,7 +98,7 @@ public class MarkerAsyncTask extends AsyncTask<Void, AbstractMarker, Void> {
             }
 
         } catch (Exception e) {
-            Log.d(this, e);
+            LogActivity.logError(this.getClass(), e);
         }
     }
 
@@ -131,7 +131,7 @@ public class MarkerAsyncTask extends AsyncTask<Void, AbstractMarker, Void> {
             }
 
         } catch (Exception e) {
-            Log.d(this, e);
+            LogActivity.logError(this.getClass(), e);
         }
     }
 

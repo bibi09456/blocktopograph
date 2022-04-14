@@ -2,7 +2,7 @@ package com.mithrilmania.blocktopograph.chunk;
 
 import androidx.annotation.NonNull;
 
-import com.mithrilmania.blocktopograph.Log;
+import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.block.Block;
 import com.mithrilmania.blocktopograph.block.BlockTemplate;
@@ -10,8 +10,6 @@ import com.mithrilmania.blocktopograph.map.Dimension;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.stream.IntStream;
 
 public abstract class Chunk {
 
@@ -37,7 +35,7 @@ public abstract class Chunk {
             mEntity = version.createEntityChunkData(this);
             mTileEntity = version.createBlockEntityChunkData(this);
         } catch (Version.VersionException e) {
-            Log.d(this, e);
+            LogActivity.logWarn(this.getClass(), e);
         }
     }
 
@@ -52,7 +50,7 @@ public abstract class Chunk {
                     worldData.writeChunkData(chunkX, chunkZ, ChunkTag.VERSION_PRE16, dimension, (byte) 0, false, new byte[]{0xf});
                     chunk = new BedrockChunk(worldData, createOfVersion, chunkX, chunkZ, dimension, true);
                 } catch (Exception e) {
-                    Log.d(Chunk.class, e);
+                    LogActivity.logError(Chunk.class, e);
                     chunk = new VoidChunk(worldData, createOfVersion, chunkX, chunkZ, dimension);
                 }
                 break;
@@ -73,7 +71,7 @@ public abstract class Chunk {
                 return createEmpty(worldData, chunkX, chunkZ, dimension, createOfVersion);
             version = Version.getVersion(data);
         } catch (WorldData.WorldDBLoadException | WorldData.WorldDBException e) {
-            Log.d(Chunk.class, e);
+            LogActivity.logError(Chunk.class, e);
             version = Version.ERROR;
         }
         Chunk chunk;

@@ -2,7 +2,6 @@ package com.mithrilmania.blocktopograph;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.MenuItem;
@@ -43,6 +42,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 public class WorldActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, WorldActivityInterface {
@@ -94,7 +94,6 @@ public class WorldActivity extends AppCompatActivity
         /*
         Retrieve world from previous state or intent
          */
-        Log.d(this, "World activity creating");
         this.world = (World) (savedInstanceState == null
                 ? getIntent().getSerializableExtra(World.ARG_WORLD_SERIALIZED)
                 : savedInstanceState.getSerializable(World.ARG_WORLD_SERIALIZED));
@@ -154,7 +153,7 @@ public class WorldActivity extends AppCompatActivity
             world.getWorldData().load();
             world.getWorldData().openDB();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogActivity.logError(this.getClass(), e);
             finish();
         }
 
@@ -163,10 +162,6 @@ public class WorldActivity extends AppCompatActivity
         bundle.putString("name", this.world.getWorldDisplayName());
         Bundle mapVersionData = world.getMapVersionData();
         if (mapVersionData != null) bundle.putAll(mapVersionData);
-
-        // anonymous global counter of opened worlds
-        Log.logFirebaseEvent(this, Log.CustomFirebaseEvent.WORLD_OPEN, bundle);
-
     }
 
     @Override
@@ -176,12 +171,7 @@ public class WorldActivity extends AppCompatActivity
 
     @Override
     public void onResume() {
-        Log.d(this, "World activity resuming...");
         super.onResume();
-//
-        // anonymous global counter of resumed world-activities
-        Log.logFirebaseEvent(this, Log.CustomFirebaseEvent.WORLD_RESUME);
-
         try {
             this.world.resume();
         } catch (WorldData.WorldDBException e) {
@@ -192,11 +182,10 @@ public class WorldActivity extends AppCompatActivity
     @Override
     public void onPause() {
         super.onPause();
-
         try {
             this.world.pause();
         } catch (WorldData.WorldDBException e) {
-            e.printStackTrace();
+            LogActivity.logError(this.getClass(), e);
         }
     }
 
@@ -213,7 +202,6 @@ public class WorldActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = mBinding.drawerLayout;
-        assert drawer != null;
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
             return;
@@ -223,7 +211,7 @@ public class WorldActivity extends AppCompatActivity
         int count = manager.getBackStackEntryCount();
 
         // No opened fragments, so it is using the default fragment
-        // Ask the user if he/she wants to close the world.
+        // Ask the user if user wants to close the world.
         if (count == 0) {
 
             new AlertDialog.Builder(this)
@@ -233,7 +221,7 @@ public class WorldActivity extends AppCompatActivity
                         try {
                             world.closeDown();
                         } catch (WorldData.WorldDBException e) {
-                            e.printStackTrace();
+                            LogActivity.logError(this.getClass(), e);
                         }
                         WorldActivity.this.finish();
                     })
@@ -259,18 +247,12 @@ public class WorldActivity extends AppCompatActivity
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        Log.d(this, "World activity nav-drawer menu item selected: " + id);
-
-
         final DrawerLayout drawer = mBinding.drawerLayout;
-        assert drawer != null;
-
 
         switch (id) {
             case (R.id.nav_world_show_map):
@@ -432,7 +414,7 @@ public class WorldActivity extends AppCompatActivity
             }
             default:
                 //Warning, we might have messed with the menu XML!
-                Log.d(this, "pressed unknown navigation-item in world-activity-drawer");
+                LogActivity.logWarn(this.getClass(), "pressed unknown navigation-item in world-activity-drawer");
                 break;
         }
 
@@ -462,7 +444,7 @@ public class WorldActivity extends AppCompatActivity
         try {
             worldData.openDB();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogActivity.logError(this.getClass(), e);
         }
         byte[] entryData = worldData.db.get(keyBytes);
         if (entryData == null) return null;
@@ -561,25 +543,19 @@ public class WorldActivity extends AppCompatActivity
                 //throw new Exception("\"" + entryType.keyName + "\" not found in DB.");
             }
 
-            Log.d(this, "Opening NBT editor for \"" + entryType.keyName + "\" from world database.");
-
             openNBTEditor(editableEntry);
 
+        } catch (IOException IOe) {
+            LogActivity.logError(this.getClass(), IOe);
         } catch (Exception e) {
-            e.printStackTrace();
-
+            LogActivity.logError(this.getClass(), e);
             String msg = e.getMessage();
-            if (e instanceof IOException)
-                Log.d(this, String.format(getString(R.string.failed_to_read_x_from_db), entryType.keyName));
-            else Log.d(this, e);
-
             new AlertDialog.Builder(WorldActivity.this)
                     .setMessage(msg == null ? "" : msg)
                     .setCancelable(false)
-                    .setNeutralButton(android.R.string.ok, (dialog, id) -> changeContentFragment(() -> openWorldMap())).show();
+                    .setNeutralButton(android.R.string.ok, (dialog, id) -> changeContentFragment(this::openWorldMap)).show();
         }
     }
-
 
     public void openMultiplayerEditor() {
 
@@ -639,9 +615,8 @@ public class WorldActivity extends AppCompatActivity
                             });
 
                         } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.d(this, "Failed to open player entry in DB. key: " + playerKey);
-                            if (content != null) Snackbar.make(content,
+                            LogActivity.logError(this.getClass(), "Failed to open player entry in DB. key: " + playerKey);
+                            Snackbar.make(content,
                                     String.format(getString(R.string.failed_read_player_from_db_with_key_x), playerKey),
                                     Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
@@ -775,8 +750,7 @@ public class WorldActivity extends AppCompatActivity
     @Override
     public void onFatalDBError(WorldData.WorldDBException worldDBException) {
 
-        Log.d(this, worldDBException.getMessage());
-        worldDBException.printStackTrace();
+        LogActivity.logError(this.getClass(), worldDBException);
 
         //already dead? (happens on multiple onFatalDBError(e) calls)
         if (fatal) return;
@@ -906,10 +880,9 @@ public class WorldActivity extends AppCompatActivity
     @Override
     public void openChunkNBTEditor(final int chunkX, final int chunkZ, final NBTChunkData nbtChunkData, final ViewGroup viewGroup) {
 
-
         if (nbtChunkData == null) {
             //should never happen
-            Log.e(this, "User tried to open null chunkData in the nbt-editor!!!");
+            LogActivity.logInfo(this.getClass(), "User tried to open null chunkData in the nbt-editor!!!");
             return;
         }
 
@@ -940,7 +913,7 @@ public class WorldActivity extends AppCompatActivity
                                     } catch (Exception e) {
                                         Snackbar.make(viewGroup, R.string.failed_to_create_or_save_chunk_NBT_data, Snackbar.LENGTH_LONG)
                                                 .setAction("Action", null).show();
-                                        Log.d(this, e);
+                                        LogActivity.logError(this.getClass(), e);
                                     }
                                 }
                             })
@@ -987,11 +960,11 @@ public class WorldActivity extends AppCompatActivity
                     final String format = "%s (cX:%d;cZ:%d)";
                     switch ((nbtChunkData).dataType) {
                         case ENTITY:
-                            return String.format(format, getString(R.string.entity_chunk_data), chunkX, chunkZ);
+                            return String.format(Locale.getDefault(), format, getString(R.string.entity_chunk_data), chunkX, chunkZ);
                         case BLOCK_ENTITY:
-                            return String.format(format, getString(R.string.tile_entity_chunk_data), chunkX, chunkZ);
+                            return String.format(Locale.getDefault(), format, getString(R.string.tile_entity_chunk_data), chunkX, chunkZ);
                         default:
-                            return String.format(format, getString(R.string.nbt_chunk_data), chunkX, chunkZ);
+                            return String.format(Locale.getDefault(), format, getString(R.string.nbt_chunk_data), chunkX, chunkZ);
                     }
                 }
 

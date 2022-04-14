@@ -11,8 +11,10 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,8 +33,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.mithrilmania.blocktopograph.BuildConfig;
 import com.mithrilmania.blocktopograph.CreateWorldActivity;
-import com.mithrilmania.blocktopograph.Log;
+import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.backup.WorldBackups;
@@ -41,11 +44,11 @@ import com.mithrilmania.blocktopograph.util.IoUtil;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class WorldItemListActivity extends AppCompatActivity {
 
@@ -94,8 +97,6 @@ public class WorldItemListActivity extends AppCompatActivity {
     private void showFeedbackRequestDialogIfNeeded() {
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
         if (prefs.getInt(PREF_KEY_ACCEPT_DATA_USAGE, 0) == 1) {
-            Log.enableCrashlytics();
-            Log.enableFirebaseAnalytics(this);
             return;
         }
         AlertDialog dialog = new AlertDialog.Builder(this)
@@ -110,12 +111,10 @@ public class WorldItemListActivity extends AppCompatActivity {
         View view = dialog.findViewById(android.R.id.message);
         if (view instanceof TextView)
             ((TextView) view).setMovementMethod(LinkMovementMethod.getInstance());
-        else Log.d(this, "cannot find android.R.id.message for privacy request dialog.");
+        else LogActivity.logInfo(this.getClass(), "cannot find android.R.id.message for privacy request dialog.");
     }
 
     private void onAcceptedRequestDialog(DialogInterface dialogInterface, int i) {
-        Log.enableFirebaseAnalytics(this);
-        Log.enableCrashlytics();
         getPreferences(MODE_PRIVATE).edit().putInt(PREF_KEY_ACCEPT_DATA_USAGE, 1).apply();
     }
 
@@ -126,6 +125,7 @@ public class WorldItemListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogActivity.cleanFile();
 
         setContentView(R.layout.activity_worldlist);
 
@@ -144,12 +144,7 @@ public class WorldItemListActivity extends AppCompatActivity {
         }
 
         FloatingActionButton fabChooseWorldFile = findViewById(R.id.fab_create);
-        fabChooseWorldFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickCreateWorld();
-            }
-        });
+        fabChooseWorldFile.setOnClickListener(view -> onClickCreateWorld());
 
         RecyclerView recyclerView = findViewById(R.id.worlditem_list);
         worldItemAdapter = new WorldItemRecyclerViewAdapter();
@@ -162,6 +157,12 @@ public class WorldItemListActivity extends AppCompatActivity {
 
         checkNotWorldFound();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LogActivity.closeFile();
     }
 
     public void checkNotWorldFound() {
@@ -238,26 +239,9 @@ public class WorldItemListActivity extends AppCompatActivity {
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        Bundle params = new Bundle();
-        int type;
-        switch (item.getItemId()) {
-            case R.id.action_open:
-                type = Log.ANA_PARAM_MAINACT_MENU_TYPE_OPEN;
-                break;
-            case R.id.action_help:
-                type = Log.ANA_PARAM_MAINACT_MENU_TYPE_HELP;
-                break;
-            case R.id.action_about:
-                type = Log.ANA_PARAM_MAINACT_MENU_TYPE_ABOUT;
-                break;
-            default:
-                type = 0;
-        }
-        params.putInt(Log.ANA_PARAM_MAINACT_MENU_TYPE, type);
-        Log.logFirebaseEvent(this, Log.CustomFirebaseEvent.MAINACT_MENU_OPEN, params);
 
         //some text pop-up dialogs, some with simple HTML tags.
         switch (item.getItemId()) {
@@ -456,7 +440,7 @@ public class WorldItemListActivity extends AppCompatActivity {
                     try {
                         mWorlds.add(new World(f, marks.get(i), WorldItemListActivity.this));
                     } catch (World.WorldLoadException e) {
-                        Log.d(this, e);
+                        LogActivity.logError(this.getClass(), e);
                     }
                 }
             }
@@ -469,7 +453,7 @@ public class WorldItemListActivity extends AppCompatActivity {
                         long tB = WorldListUtil.getLastPlayedTimestamp(b);
                         return Long.compare(tB, tA);
                     } catch (Exception e) {
-                        Log.d(this, e);
+                        LogActivity.logError(this.getClass(), e);
                         return 0;
                     }
                 }
@@ -507,6 +491,7 @@ public class WorldItemListActivity extends AppCompatActivity {
             holder.mWorldSize.setText(IoUtil.getFileSizeInText(FileUtils.sizeOf(holder.mWorld.worldFolder)));
             holder.mWorldGamemode.setText(WorldListUtil.getWorldGamemodeText(WorldItemListActivity.this, holder.mWorld));
             holder.mWorldLastPlayed.setText(WorldListUtil.getLastPlayedText(WorldItemListActivity.this, holder.mWorld));
+            holder.mWorldLastOpenedVersion.setText(Objects.requireNonNull(holder.mWorld.getMinClientVersion()));
             holder.mWorldPath.setText(holder.mWorld.worldFolder.getName());
             holder.mWorldMark.setText(holder.mWorld.mark);
 

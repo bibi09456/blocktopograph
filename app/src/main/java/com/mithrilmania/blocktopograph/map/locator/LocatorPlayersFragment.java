@@ -12,7 +12,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.mithrilmania.blocktopograph.Log;
+import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.WorldData;
@@ -135,13 +135,13 @@ public final class LocatorPlayersFragment extends LocatorPageFragment {
                     try {
                         player.setPosition(world.getMultiPlayerPos(mlst[i]));
                     } catch (Exception e) {
-                        Log.d(this, e);
+                        LogActivity.logError(this.getClass(), e);
                     }
                     players[i + offset] = player;
                 }
                 return players;
             } catch (Exception e) {
-                Log.d(this, e);
+                LogActivity.logError(this.getClass(), e);
                 return null;
             }
         }

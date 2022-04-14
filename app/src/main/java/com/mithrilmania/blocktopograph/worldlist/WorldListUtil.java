@@ -3,7 +3,7 @@ package com.mithrilmania.blocktopograph.worldlist;
 
 import android.content.Context;
 
-import com.mithrilmania.blocktopograph.Log;
+import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.World;
 
@@ -15,7 +15,7 @@ public class WorldListUtil {
         try {
             return (long) world.getLevel().getChildTagByKey("LastPlayed").getValue();
         } catch (Exception e) {
-            Log.d(WorldListUtil.class, e);
+            LogActivity.logError(WorldListUtil.class, e);
             return 0;
         }
     }
@@ -46,7 +46,7 @@ public class WorldListUtil {
                     gameMode = "?";
             }
         } catch (Exception e) {
-            Log.d(WorldListUtil.class, e);
+            LogActivity.logError(WorldListUtil.class, e);
             gameMode = "??";
         }
         return gameMode;

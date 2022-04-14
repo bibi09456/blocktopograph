@@ -6,11 +6,10 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Streams;
 import com.mithrilmania.blocktopograph.BuildConfig;
-import com.mithrilmania.blocktopograph.Log;
+import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.block.Block;
 import com.mithrilmania.blocktopograph.block.BlockTemplate;
@@ -28,10 +27,6 @@ import com.mithrilmania.blocktopograph.nbt.tags.StringTag;
 import com.mithrilmania.blocktopograph.nbt.tags.Tag;
 import com.mithrilmania.blocktopograph.util.LittleEndianOutputStream;
 
-import net.lingala.zip4j.io.inputstream.ZipInputStream;
-
-import org.checkerframework.checker.units.qual.C;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,9 +38,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.zip.ZipOutputStream;
 
 public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
 
@@ -81,7 +74,7 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
                     mStorages[0] = BlockStorage.loadAndMoveForward(raw);
                 } catch (IOException e) {
                     if (BuildConfig.DEBUG) {
-                        Log.d(this, e);
+                        LogActivity.logError(this.getClass(), e);
                     }
                     mIsError = true;
                 }
@@ -100,7 +93,7 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
                     if (count > 1) mStorages[1] = BlockStorage.loadAndMoveForward(raw);
                 } catch (IOException e) {
                     if (BuildConfig.DEBUG) {
-                        Log.d(this, e);
+                        LogActivity.logError(this.getClass(), e);
                     }
                     mIsError = true;
                 }
@@ -433,7 +426,7 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
             var builder = (blockType == null ? new Block.Builder(name) : new Block.Builder(blockType));
             for (var state : ((CompoundTag) tag.getChildTagByKey(PALETTE_KEY_STATES)).getValue())
                 builder.setProperty(state);
-            Log.d(BlockStorage.class, "fuckfuckversion" + tag.getChildTagByKey(PALETTE_KEY_VERSION).getValue());
+            LogActivity.logInfo(BlockStorage.class, "fuckfuckversion" + tag.getChildTagByKey(PALETTE_KEY_VERSION).getValue());
             return builder.build();
         }
 
