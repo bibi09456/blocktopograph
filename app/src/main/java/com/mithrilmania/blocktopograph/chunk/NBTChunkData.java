@@ -7,6 +7,7 @@ import com.mithrilmania.blocktopograph.nbt.tags.Tag;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -23,7 +24,7 @@ public class NBTChunkData extends ChunkData {
 
     public void load() throws WorldData.WorldDBLoadException, WorldData.WorldDBException, IOException {
         Chunk chunk = this.chunk.get();
-        loadFromByteArray(chunk.getWorldData().getChunkData(chunk.mChunkX, chunk.mChunkZ, dataType, chunk.mDimension, (byte) 0, false));
+        loadFromByteArray(chunk.getWorldData().getChunkData(chunk.chunkKeyData, dataType, (byte) 0, false));
     }
 
     public void loadFromByteArray(byte[] data) throws IOException {
@@ -34,12 +35,12 @@ public class NBTChunkData extends ChunkData {
         if (this.tags == null) this.tags = new ArrayList<>();
         byte[] data = DataConverter.write(this.tags);
         Chunk chunk = this.chunk.get();
-        chunk.getWorldData().writeChunkData(chunk.mChunkX, chunk.mChunkZ, this.dataType, chunk.mDimension, (byte) 0, false, data);
+        chunk.getWorldData().writeChunkData(chunk.chunkKeyData, this.dataType, (byte) 0, false, data);
     }
 
     @Override
     public void createEmpty() {
-        if (this.tags == null) this.tags = new ArrayList<>();
+        if (this.tags == null) this.tags = new LinkedList<>();
         this.tags.add(new IntTag("Placeholder", 42));
     }
 

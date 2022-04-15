@@ -12,6 +12,7 @@ import com.mithrilmania.blocktopograph.block.BlockTemplates;
 import com.mithrilmania.blocktopograph.block.OldBlock;
 import com.mithrilmania.blocktopograph.block.KnownBlockRepr;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
+import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
 import com.mithrilmania.blocktopograph.chunk.Version;
 import com.mithrilmania.blocktopograph.map.Dimension;
 
@@ -20,8 +21,8 @@ public class NetherRenderer implements MapRenderer {
 
     public void renderToBitmap(Chunk chunk, Canvas canvas, Dimension dimension, int chunkX, int chunkZ, int pX, int pY, int pW, int pL, Paint paint, WorldData worldData) throws Version.VersionException {
 
-        Chunk chunkW = worldData.getChunk(chunkX - 1, chunkZ, dimension);
-        Chunk chunkN = worldData.getChunk(chunkX, chunkZ - 1, dimension);
+        Chunk chunkW = worldData.getChunk(new ChunkKeyData(chunkX - 1, chunkZ, dimension));
+        Chunk chunkN = worldData.getChunk(new ChunkKeyData(chunkX, chunkZ - 1, dimension));
 
         //Do you have to list all variables here in a 80s manner
         // regardless of many are only used within nested loop...
@@ -43,13 +44,13 @@ public class NetherRenderer implements MapRenderer {
                 cavefloor = chunk.getHeightMapValue(x, z);//TODO test this
 
                 while (cavefloor > 0) {
-                    caveceil = chunk.getCaveYUnderAt(x, z, cavefloor - 1);
+                    caveceil = chunk.getHighestBlockYUnderAt(x, z, cavefloor - 1);
 
 
                     cavefloor = chunk.getHighestBlockYUnderAt(x, z, caveceil - 1);
-                    cavefloorW = (x == 0) ? (chunkW != null ? chunkW.getHighestBlockYUnderAt(dimension.chunkW - 1, z, caveceil - 1) : cavefloor)//chunk edge
+                    cavefloorW = (x == 0) ? (chunkW != null ? chunkW.getHighestBlockYUnderAt(dimension.chunkWidth - 1, z, caveceil - 1) : cavefloor)//chunk edge
                             : chunk.getHighestBlockYUnderAt(x - 1, z, caveceil - 1);//within chunk
-                    cavefloorN = (z == 0) ? (chunkN != null ? chunkN.getHighestBlockYUnderAt(x, dimension.chunkL - 1, caveceil - 1) : cavefloor)//chunk edge
+                    cavefloorN = (z == 0) ? (chunkN != null ? chunkN.getHighestBlockYUnderAt(x, dimension.chunkLength - 1, caveceil - 1) : cavefloor)//chunk edge
                             : chunk.getHighestBlockYUnderAt(x, z - 1, caveceil - 1);//within chunk
 
                     //height shading (based on slopes in terrain; height diff)
@@ -65,7 +66,7 @@ public class NetherRenderer implements MapRenderer {
                     }
 
 
-                    sliceShading = 0.5f + (((float) (caveceil - cavefloor)) / dimension.chunkH);
+                    sliceShading = 0.5f + (((float) (caveceil - cavefloor)) / dimension.chunkHeighHighest);
 
                     //mix shading
                     shading = heightShading * lightShading * sliceShading;

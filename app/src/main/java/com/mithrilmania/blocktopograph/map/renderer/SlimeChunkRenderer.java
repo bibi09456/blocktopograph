@@ -6,6 +6,7 @@ import android.graphics.Rect;
 
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
+import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
 import com.mithrilmania.blocktopograph.chunk.Version;
 import com.mithrilmania.blocktopograph.map.Dimension;
 import com.mithrilmania.blocktopograph.util.MTwister;
@@ -17,8 +18,8 @@ public class SlimeChunkRenderer implements MapRenderer {
 
         int x, z, tX, tY;
 
-        Chunk dataW = worldData.getChunk(chunkX - 1, chunkZ, dimension);
-        Chunk dataN = worldData.getChunk(chunkX, chunkZ - 1, dimension);
+        Chunk dataW = worldData.getChunk(new ChunkKeyData(chunkX - 1, chunkZ, dimension));
+        Chunk dataN = worldData.getChunk(new ChunkKeyData(chunkX, chunkZ - 1, dimension));
 
         boolean west = dataW != null && !dataW.isVoid(),
                 north = dataN != null && !dataN.isVoid();
@@ -35,9 +36,9 @@ public class SlimeChunkRenderer implements MapRenderer {
                 int y = chunk.getHeightMapValue(x, z);
 
                 color = SatelliteRenderer.getColumnColour(chunk, x, y, z,
-                        (x == 0) ? (west ? dataW.getHeightMapValue(dimension.chunkW - 1, z) : y)//chunk edge
+                        (x == 0) ? (west ? dataW.getHeightMapValue(dimension.chunkWidth - 1, z) : y)//chunk edge
                                 : chunk.getHeightMapValue(x - 1, z),//within chunk
-                        (z == 0) ? (north ? dataN.getHeightMapValue(x, dimension.chunkL - 1) : y)//chunk edge
+                        (z == 0) ? (north ? dataN.getHeightMapValue(x, dimension.chunkLength - 1) : y)//chunk edge
                                 : chunk.getHeightMapValue(x, z - 1)//within chunk
                 );
                 r = (color >> 16) & 0xff;

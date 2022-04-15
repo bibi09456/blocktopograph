@@ -3,9 +3,11 @@ package com.mithrilmania.blocktopograph.chunk.terrain;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.block.Block;
 import com.mithrilmania.blocktopograph.block.BlockTemplate;
+import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
 import com.mithrilmania.blocktopograph.map.Dimension;
 
 import java.io.IOException;
@@ -28,7 +30,7 @@ public abstract class TerrainSubChunk {
 
     @Nullable
     public static TerrainSubChunk create(@NonNull byte[] rawData) {
-        Logger.getLogger(TerrainSubChunk.class.getName()).log(Level.INFO, Arrays.toString(rawData));
+        LogActivity.logInfo(TerrainSubChunk.class, Arrays.toString(rawData));
         TerrainSubChunk subChunk;
         ByteBuffer byteBuffer = ByteBuffer.wrap(rawData);
         switch (rawData[0]) {
@@ -43,7 +45,7 @@ public abstract class TerrainSubChunk {
     }
 
     @Nullable
-    public static TerrainSubChunk createEmpty(int preferredVersion) {
+    public static TerrainSubChunk createEmpty(Integer preferredVersion) {
         TerrainSubChunk subChunk;
         switch (preferredVersion) {
             case 1:
@@ -63,28 +65,27 @@ public abstract class TerrainSubChunk {
 //    }
 
     @NonNull
-    abstract public BlockTemplate getBlockTemplate(int x, int y, int z, int layer);
+    abstract public BlockTemplate getBlockTemplate(Integer x, Integer y, Integer z, Integer layer);
 
     @NonNull
-    abstract public Block getBlock(int x, int y, int z, int layer);
+    abstract public Block getBlock(Integer x, Integer y, Integer z, Integer layer);
 
-    abstract public void setBlock(int x, int y, int z, int layer, @NonNull Block block);
+    abstract public void setBlock(Integer x, Integer y, Integer z, Integer layer, @NonNull Block block);
 
-    abstract public int getBlockLightValue(int x, int y, int z);
+    abstract public Integer getBlockLightValue(Integer x, Integer y, Integer z);
 
-    abstract public int getSkyLightValue(int x, int y, int z);
+    abstract public Integer getSkyLightValue(Integer x, Integer y, Integer z);
 
-    protected static final int getOffset(int x, int y, int z) {
+    protected static Integer getOffset(Integer x, Integer y, Integer z) {
         return (((x << 4) | z) << 4) | y;
     }
 
-
-    public final boolean hasBlockLight() {
+    public final Boolean hasBlockLight() {
         return mHasBlockLight;
     }
 
 
-    public final boolean isError() {
+    public final Boolean isError() {
         return mIsError;
     }
 
@@ -97,6 +98,6 @@ public abstract class TerrainSubChunk {
 //        return oldBlockRegistry;
 //    }
 
-    abstract public void save(WorldData worldData, int chunkX, int chunkZ, Dimension dimension, int which) throws WorldData.WorldDBException, IOException;
+    abstract public void save(WorldData worldData, ChunkKeyData chunkKeyData, Integer which) throws WorldData.WorldDBException, IOException;
 
 }

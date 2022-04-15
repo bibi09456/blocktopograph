@@ -15,8 +15,8 @@ public class DebugRenderer implements MapRenderer {
 
         int x, z, i, j, tX, tY;
 
-        int offsetX = chunkX * dimension.chunkW;
-        int offsetZ = chunkZ * dimension.chunkL;
+        int offsetX = chunkX * dimension.chunkWidth;
+        int offsetZ = chunkZ * dimension.chunkLength;
 
         for (z = 0, tY = pY; z < 16; z++, tY += pL) {
             for (x = 0, tX = pX; x < 16; x++, tX += pW) {

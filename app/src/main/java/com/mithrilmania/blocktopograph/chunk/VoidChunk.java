@@ -6,89 +6,79 @@ import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.block.Block;
 import com.mithrilmania.blocktopograph.block.BlockTemplate;
 import com.mithrilmania.blocktopograph.block.BlockTemplates;
-import com.mithrilmania.blocktopograph.block.OldBlock;
+import com.mithrilmania.blocktopograph.map.Biome;
 import com.mithrilmania.blocktopograph.map.Dimension;
+
+import java.io.IOException;
 
 
 public final class VoidChunk extends Chunk {
 
-    VoidChunk(WorldData worldData, Version version, int chunkX, int chunkZ, Dimension dimension) {
-        super(worldData, version, chunkX, chunkZ, dimension);
+    VoidChunk(WorldData worldData, ChunkKeyData chunkKeyData) {
+        super(worldData, chunkKeyData);
         mIsVoid = true;
     }
 
     @Override
-    public boolean supportsBlockLightValues() {
+    public Boolean supportsBlockLightValues() {
         return false;
     }
 
     @Override
-    public boolean supportsHeightMap() {
+    public Boolean supportsHeightMap() {
         return false;
     }
 
     @Override
-    public int getHeightLimit() {
+    public Integer getHeightMapValue(Integer x, Integer z) {
         return 0;
     }
 
     @Override
-    public int getHeightMapValue(int x, int z) {
+    public Integer getBiome(Integer x, Integer z) {
         return 0;
     }
 
     @Override
-    public int getBiome(int x, int z) {
-        return 0;
-    }
+    public void setBiome(Integer x, Integer z, Integer id) { }
 
     @Override
-    public void setBiome(int x, int z, int id) {
-    }
-
-    @Override
-    public int getGrassColor(int x, int z) {
+    public Integer getGrassColor(Integer x, Integer z) {
         return 0;
     }
 
     @NonNull
     @Override
-    public BlockTemplate getBlockTemplate(int x, int y, int z, int layer) {
+    public BlockTemplate getBlockTemplate(Integer x, Integer y, Integer z, Integer layer) {
         return BlockTemplates.getAirTemplate();
     }
 
     @NonNull
     @Override
-    public Block getBlock(int x, int y, int z, int layer) {
+    public Block getBlock(Integer x, Integer y, Integer z, Integer layer) {
         throw new RuntimeException();
     }
 
     @Override
-    public void setBlock(int x, int y, int z, int layer, @NonNull Block block) {
+    public void setBlock(Integer x, Integer y, Integer z, Integer layer, @NonNull Block block) {
         throw new RuntimeException();
     }
 
     @Override
-    public int getBlockLightValue(int x, int y, int z) {
+    public Integer getBlockLightValue(Integer x, Integer y, Integer z) {
         return 0;
     }
 
     @Override
-    public int getSkyLightValue(int x, int y, int z) {
+    public Integer getSkyLightValue(Integer x, Integer y, Integer z) {
         return 0;
     }
 
     @Override
-    public int getHighestBlockYUnderAt(int x, int z, int y) {
-        return -1;
+    public Integer getHighestBlockYUnderAt(Integer x, Integer z, Integer y) {
+        return chunkKeyData.getChunkHeight(0) - 1;
     }
 
     @Override
-    public int getCaveYUnderAt(int x, int z, int y) {
-        return -1;
-    }
-
-    @Override
-    public void save() {
-    }
+    public void save() throws WorldData.WorldDBException, IOException { }
 }

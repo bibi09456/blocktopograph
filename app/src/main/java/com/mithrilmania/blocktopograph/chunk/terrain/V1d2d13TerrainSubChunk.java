@@ -16,6 +16,7 @@ import com.mithrilmania.blocktopograph.block.BlockTemplate;
 import com.mithrilmania.blocktopograph.block.BlockTemplates;
 import com.mithrilmania.blocktopograph.block.BlockType;
 import com.mithrilmania.blocktopograph.block.blockproperty.BlockProperty;
+import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
 import com.mithrilmania.blocktopograph.chunk.ChunkTag;
 import com.mithrilmania.blocktopograph.map.Dimension;
 import com.mithrilmania.blocktopograph.nbt.convert.NBTInputStream;
@@ -57,6 +58,79 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
         mStorages = new BlockStorage[2];
         mIsDualStorageSupported = true;
         createEmptyBlockStorage(0);
+    }
+
+    @NonNull
+    @Override
+    public BlockTemplate getBlockTemplate(Integer x, Integer y, Integer z, Integer layer) {
+        if (mIsError) return BlockTemplates.getAirTemplate();
+        BlockStorage storage = mStorages[layer];
+        if (storage == null) return BlockTemplates.getAirTemplate();
+        return storage.getBlock(x, y, z).second;
+    }
+
+    @NonNull
+    @Override
+    public Block getBlock(Integer x, Integer y, Integer z, Integer layer) {
+        if (mIsError) throw new RuntimeException();
+        BlockStorage storage = mStorages[layer];
+        if (storage == null) return BlockTemplates.getAirTemplate().getBlock();
+        return storage.getBlock(x, y, z).first;    }
+
+    @Override
+    public void setBlock(Integer x, Integer y, Integer z, Integer layer, @NonNull Block block) {
+
+        // Has error or not supported.
+        if (mIsError || (layer > 0 && !mIsDualStorageSupported)) throw new RuntimeException();
+
+        BlockStorage storage = mStorages[layer];
+        // Main storage won't be null unless error.
+        if (storage == null) storage = createEmptyBlockStorage(layer);
+
+        // If space is enough.
+        if (storage.setBlockIfSpace(x, y, z, block)) return;
+
+        // Or we have to extend the whole storage.
+        storage = BlockStorage.extend(storage);
+
+        mStorages[layer] = storage;
+        storage.setBlockIfSpace(x, y, z, block);
+    }
+
+    @Override
+    public Integer getBlockLightValue(Integer x, Integer y, Integer z) {
+        return 0;
+    }
+
+    @Override
+    public Integer getSkyLightValue(Integer x, Integer y, Integer z) {
+        return 0;
+    }
+
+    @Override
+    public void save(WorldData worldData, ChunkKeyData chunkKeyData, Integer which) throws WorldData.WorldDBException, IOException {
+
+        if (mIsError) return;
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        LittleEndianOutputStream leos = new LittleEndianOutputStream(baos);
+
+        int storageCount = mIsDualStorageSupported ? (mStorages[1] == null ? 1 : 2) : 1;
+
+        if (mIsDualStorageSupported) {
+            leos.write(8);
+            leos.write(storageCount);
+            mStorages[0].write(leos);
+            if (storageCount == 2) mStorages[1].write(leos);
+        } else {
+            leos.write(1);
+            mStorages[0].write(leos);
+        }
+        leos.flush();
+
+        byte[] arr = baos.toByteArray();
+        worldData.writeChunkData(chunkKeyData, ChunkTag.SUB_CHUNK_PREFIX, which.byteValue(), true, arr);
+
     }
 
     V1d2d13TerrainSubChunk(@NonNull ByteBuffer raw) {
@@ -106,84 +180,11 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
         mHasSkyLight = false;
     }
 
-    @NonNull
-    @Override
-    public BlockTemplate getBlockTemplate(int x, int y, int z, int layer) {
-        if (mIsError) return BlockTemplates.getAirTemplate();
-        BlockStorage storage = mStorages[layer];
-        if (storage == null) return BlockTemplates.getAirTemplate();
-        return storage.getBlock(x, y, z).second;
-    }
 
-    @NonNull
-    @Override
-    public Block getBlock(int x, int y, int z, int layer) {
-        if (mIsError) throw new RuntimeException();
-        BlockStorage storage = mStorages[layer];
-        if (storage == null) return BlockTemplates.getAirTemplate().getBlock();
-        return storage.getBlock(x, y, z).first;
-    }
-
-    @Override
-    public void setBlock(int x, int y, int z, int layer, @NonNull Block block) {
-
-        // Has error or not supported.
-        if (mIsError || (layer > 0 && !mIsDualStorageSupported)) throw new RuntimeException();
-
-        BlockStorage storage = mStorages[layer];
-        // Main storage won't be null unless error.
-        if (storage == null) storage = createEmptyBlockStorage(layer);
-
-        // If space is enough.
-        if (storage.setBlockIfSpace(x, y, z, block)) return;
-
-        // Or we have to extend the whole storage.
-        storage = BlockStorage.extend(storage);
-
-        mStorages[layer] = storage;
-        storage.setBlockIfSpace(x, y, z, block);
-    }
-
-    @Override
-    public int getBlockLightValue(int x, int y, int z) {
-        return 0;
-    }
-
-    @Override
-    public int getSkyLightValue(int x, int y, int z) {
-        return 0;
-    }
-
-    private BlockStorage createEmptyBlockStorage(int which) {
+    private BlockStorage createEmptyBlockStorage(Integer which) {
         BlockStorage storage = BlockStorage.createNew();
         mStorages[which] = storage;
         return storage;
-    }
-
-    @Override
-    public void save(WorldData worldData, int chunkX, int chunkZ, Dimension dimension, int which) throws WorldData.WorldDBException, IOException {
-
-        if (mIsError) return;
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        LittleEndianOutputStream leos = new LittleEndianOutputStream(baos);
-
-        int storageCount = mIsDualStorageSupported ? (mStorages[1] == null ? 1 : 2) : 1;
-
-        if (mIsDualStorageSupported) {
-            leos.write(8);
-            leos.write(storageCount);
-            mStorages[0].write(leos);
-            if (storageCount == 2) mStorages[1].write(leos);
-        } else {
-            leos.write(1);
-            mStorages[0].write(leos);
-        }
-        leos.flush();
-
-        byte[] arr = baos.toByteArray();
-        worldData.writeChunkData(chunkX, chunkZ, ChunkTag.TERRAIN, dimension, (byte) which, true, arr);
-
     }
 
     private static class BlockStorage {

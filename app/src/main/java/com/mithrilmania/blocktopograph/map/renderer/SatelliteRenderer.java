@@ -12,6 +12,7 @@ import com.mithrilmania.blocktopograph.block.BlockTemplates;
 import com.mithrilmania.blocktopograph.block.OldBlock;
 import com.mithrilmania.blocktopograph.block.KnownBlockRepr;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
+import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
 import com.mithrilmania.blocktopograph.chunk.Version;
 import com.mithrilmania.blocktopograph.map.Dimension;
 
@@ -19,7 +20,7 @@ import com.mithrilmania.blocktopograph.map.Dimension;
 public class SatelliteRenderer implements MapRenderer {
 
     //calculate color of one column
-    static int getColumnColour(@NonNull Chunk chunk, int x, int y, int z, int heightW, int heightN) throws Version.VersionException {
+    static int getColumnColour(@NonNull Chunk chunk, int x, int y, int z, int heightW, int heightN) {
         float alphaRemain = 1f;
         float finalR = 0f;
         float finalG = 0f;
@@ -93,8 +94,8 @@ public class SatelliteRenderer implements MapRenderer {
 
     public void renderToBitmap(Chunk chunk, Canvas canvas, Dimension dimension, int chunkX, int chunkZ, int pX, int pY, int pW, int pL, Paint paint, WorldData worldData) throws Version.VersionException {
 
-        Chunk dataW = worldData.getChunk(chunkX - 1, chunkZ, dimension);
-        Chunk dataN = worldData.getChunk(chunkX, chunkZ - 1, dimension);
+        Chunk dataW = worldData.getChunk(new ChunkKeyData(chunkX - 1, chunkZ, dimension));
+        Chunk dataN = worldData.getChunk(new ChunkKeyData(chunkX, chunkZ - 1, dimension));
 
         boolean west = dataW != null && !dataW.isVoid(),
                 north = dataN != null && !dataN.isVoid();
@@ -106,9 +107,9 @@ public class SatelliteRenderer implements MapRenderer {
                 if (y == 0) continue;
 
                 int color = getColumnColour(chunk, x, y, z,
-                        (x == 0) ? (west ? dataW.getHeightMapValue(dimension.chunkW - 1, z) : y)//chunk edge
+                        (x == 0) ? (west ? dataW.getHeightMapValue(dimension.chunkWidth - 1, z) : y)//chunk edge
                                 : chunk.getHeightMapValue(x - 1, z),//within chunk
-                        (z == 0) ? (north ? dataN.getHeightMapValue(x, dimension.chunkL - 1) : y)//chunk edge
+                        (z == 0) ? (north ? dataN.getHeightMapValue(x, dimension.chunkLength - 1) : y)//chunk edge
                                 : chunk.getHeightMapValue(x, z - 1)//within chunk
                 );
                 paint.setColor(color);

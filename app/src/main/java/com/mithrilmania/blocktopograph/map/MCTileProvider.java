@@ -12,6 +12,7 @@ import android.text.TextPaint;
 import com.mithrilmania.blocktopograph.WorldActivityInterface;
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
+import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
 import com.mithrilmania.blocktopograph.map.renderer.MapType;
 import com.qozix.tileview.graphics.BitmapProvider;
 import com.qozix.tileview.tiles.Tile;
@@ -30,8 +31,8 @@ public class MCTileProvider implements BitmapProvider {
     HALF_WORLDSIZE = 1 << 20;
 
     public static int worldSizeInBlocks = 2 * HALF_WORLDSIZE,
-            viewSizeW = worldSizeInBlocks * TILESIZE / Dimension.OVERWORLD.chunkW,
-            viewSizeL = worldSizeInBlocks * TILESIZE / Dimension.OVERWORLD.chunkL;
+            viewSizeW = worldSizeInBlocks * TILESIZE / Dimension.OVERWORLD.chunkWidth,
+            viewSizeL = worldSizeInBlocks * TILESIZE / Dimension.OVERWORLD.chunkLength;
 
     public final WeakReference<WorldActivityInterface> worldProvider;
 
@@ -39,7 +40,7 @@ public class MCTileProvider implements BitmapProvider {
         this.worldProvider = new WeakReference<>(worldProvider);
     }
 
-    public static Bitmap drawText(String text, Bitmap b, int textColor, int bgColor) {
+    public static void drawText(String text, Bitmap b, int textColor, int bgColor) {
         // Get text dimensions
         TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG);
         textPaint.setStyle(Paint.Style.FILL);
@@ -64,7 +65,6 @@ public class MCTileProvider implements BitmapProvider {
         mTextLayout.draw(c);
         c.restore();
 
-        return b;
     }
 
     @Override
@@ -128,7 +128,7 @@ public class MCTileProvider implements BitmapProvider {
             for (z = minChunkZ, pY = 0; z < maxChunkZ; z++, pY += pixelsPerChunkL)
                 for (x = minChunkX, pX = 0; x < maxChunkX; x++, pX += pixelsPerChunkW) {
 
-                    Chunk chunk = worldData.getChunk(x, z, dimension);
+                    Chunk chunk = worldData.getChunk(new ChunkKeyData(x, z, dimension.chunkHeighLowest, dimension.chunkHeighHighest, dimension));
                     if (chunk.isError()) {
                         MapType.ERROR.renderer.renderToBitmap(chunk, canvas, dimension,
                                 x, z, pX, pY, pixelsPerBlockW, pixelsPerBlockL, paint, worldData);

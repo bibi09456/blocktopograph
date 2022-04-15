@@ -273,12 +273,6 @@ public class World implements Serializable {
             int spawnX = ((IntTag) level.getChildTagByKey("SpawnX")).getValue();
             int spawnY = ((IntTag) level.getChildTagByKey("SpawnY")).getValue();
             int spawnZ = ((IntTag) level.getChildTagByKey("SpawnZ")).getValue();
-            if (spawnY >= 256) try {
-                Chunk chunk = getWorldData().getChunk(spawnX >> 4, spawnZ >> 4, Dimension.OVERWORLD);
-                if (!chunk.isError())
-                    spawnY = chunk.getHeightMapValue(spawnX % 16, spawnZ % 16) + 1;
-            } catch (Exception ignored) {
-            }
             return new DimensionVector3<>(spawnX, spawnY, spawnZ, Dimension.OVERWORLD);
         } catch (Exception e) {
             LogActivity.logError(this.getClass(), e);

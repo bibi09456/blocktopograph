@@ -430,7 +430,7 @@
     <string name="map_smart_notice_too_many_markers_message">There\'re too many markers on your screen, e.g. mobs. You can turn them off by clicking \"toggle markers\" in the slide drawer, or set a marker filter.</string>
     <string name="map_uioption_open_drawer">Open drawer</string>
     <string name="general_got_it">Got it</string>
-    <string name="privacy_promo_title" translatable="false">Privacy Policy</string>
+    <string name="privacy_promo_title">Privacy Policy</string>
     <string name="privacy_promo_text" translatable="false"><!--
         -->Hello friend,\n\n<!--
         -->For a better experience, while using our Service, I may require you to provide us with <!--
@@ -447,8 +447,8 @@
         -->at <a href="https://sites.google.com/view/rbq2012-blocktopograph-privacy"><!--
         -->Blocktopograph Privacy Policy</a><!--
      --></string>
-    <string name="privacy_promo_accept_btn" translatable="false">Accept></string>
-    <string name="privacy_promo_reject_btn" translatable="false">Quit</string>
+    <string name="privacy_promo_accept_btn">Accept</string>
+    <string name="privacy_promo_reject_btn">Quit</string>
     <string name="biome_pick_title">Pick A Biome</string>
     <string name="map_edit_func_chbiome">Change Biome</string>
     <string name="map_edit_chbiome_for">For</string>

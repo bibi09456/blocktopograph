@@ -7,6 +7,7 @@ import android.view.ViewParent;
 import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.WorldActivityInterface;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
+import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
 import com.mithrilmania.blocktopograph.chunk.NBTChunkData;
 import com.mithrilmania.blocktopograph.map.marker.AbstractMarker;
 import com.mithrilmania.blocktopograph.nbt.tags.CompoundTag;
@@ -59,8 +60,7 @@ public class MarkerAsyncTask extends AsyncTask<Void, AbstractMarker, Void> {
 
     private void loadEntityMarkers(int chunkX, int chunkZ) {
         try {
-            Chunk chunk = worldProvider.get().getWorld().getWorldData()
-                    .getChunk(chunkX, chunkZ, dimension);
+            Chunk chunk = worldProvider.get().getWorld().getWorldData().getChunk(new ChunkKeyData(chunkX, chunkZ, dimension.chunkHeighLowest, dimension.chunkHeighHighest, dimension));
 
             NBTChunkData entityData = chunk.getEntity();
 
@@ -105,7 +105,7 @@ public class MarkerAsyncTask extends AsyncTask<Void, AbstractMarker, Void> {
     private void loadTileEntityMarkers(int chunkX, int chunkZ) {
         try {
             Chunk chunk = worldProvider.get().getWorld().getWorldData()
-                    .getChunk(chunkX, chunkZ, dimension);
+                    .getChunk(new ChunkKeyData(chunkX, chunkZ, dimension));
 
             NBTChunkData tileEntityData = chunk.getBlockEntity();
 

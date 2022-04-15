@@ -17,6 +17,7 @@ import com.mithrilmania.blocktopograph.util.UiUtil;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -26,7 +27,6 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
 
     private final WeakReference<PicerFragment> owner;
     private boolean hasWrongChunks;
-    private boolean hasOldChunks;
     private AlertDialog waitDialog;
 
     AnalyzeTask(PicerFragment owner) {
@@ -66,6 +66,7 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
             try {
                 worldData.openDB();
             } catch (Exception e) {
+                LogActivity.logError(this.getClass(), e);
                 break getDb;
             }
             db = worldData.db;
@@ -73,17 +74,14 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
         if (db == null) return null;
 
         Dimension dimension = owner.mDimension;
-        int verKeyLenOfDim;
+        int DimensionVersionKeyLength;
         switch (dimension) {
-            case OVERWORLD:
-                verKeyLenOfDim = 9;
-                break;
             case NETHER:
             case END:
-                verKeyLenOfDim = 13;
+                DimensionVersionKeyLength = 14;
                 break;
             default:
-                return null;
+                DimensionVersionKeyLength = 10;
         }
 
         // We used to separate world into areas or clusters, now that
@@ -95,28 +93,29 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
 
         // Iterate over all items.
         try {
-            db.put(new byte[]{0, 1, 2, 3, 0, 1, 2, 3, 118}, new byte[]{0});
+//            db.put(new byte[]{0, 1, 2, 3, 0, 1, 2, 3, 118}, new byte[]{0});
             Iterator iterator = db.iterator();
-            boolean cancelled = false;
+            boolean isCancelled = false;
             int loopCount = 0;
             loop:
             for (iterator.seekToFirst(); iterator.isValid(); iterator.next(), loopCount++) {
 
                 if (isCancelled()) {
-                    cancelled = true;
+                isCancelled = true;
                     break;
                 }
 
                 // Is it a key for a chunk of current dim's version record?
                 byte[] key = iterator.getKey();
-                if (key.length != verKeyLenOfDim) continue;
-                if (key[verKeyLenOfDim - 1] != (byte) 0x76) continue;
+                LogActivity.logInfo(this.getClass(), Arrays.toString(key));
+                if (key.length != DimensionVersionKeyLength) continue;
+                if ((key[DimensionVersionKeyLength - 1] != (byte) 0x76) || (key[DimensionVersionKeyLength - 1] != (byte) 0x2c)) continue;
                 ByteBuffer byteBuffer = ByteBuffer.wrap(key);
                 byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
                 int x = byteBuffer.getInt();
                 int z = byteBuffer.getInt();
                 // Wrong dim.
-                if (verKeyLenOfDim == 13 && dimension.id != byteBuffer.getInt()) continue;
+                if (DimensionVersionKeyLength == 13 && dimension.id != byteBuffer.getInt()) continue;
                 byte[] value = iterator.getValue();
                 Version version = Version.getVersion(value);
                 // Record unsupported stuff and skip.
@@ -124,9 +123,6 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
                     case ERROR:
                     case NULL:
                         hasWrongChunks = true;
-                        continue loop;
-                    case OLD_LIMITED:
-                        hasOldChunks = true;
                         continue loop;
                 }
 
@@ -157,7 +153,7 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
 //                if (loopCount > 16) Area.absMergeList(areas);
             }
             iterator.close();
-            if (cancelled) return null;
+            if (isCancelled) return null;
         } catch (Exception e) {
             LogActivity.logError(this.getClass(), e);
             return null;
@@ -205,11 +201,9 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
         if (rect != null) {
             owner.onAnalyzeDone(rect);
 
-        } else if (hasWrongChunks || hasOldChunks) {
+        } else if (hasWrongChunks) {
             // Size 0 with exception, dismiss and show exception in dialog.
-            @StringRes int strId;
-            if (hasWrongChunks) strId = R.string.picer_failed_corrupt;
-            else strId = R.string.picer_failed_old;
+            @StringRes int strId = R.string.picer_failed_old;
             owner.showFailureDialogAndDismiss(strId);
 
             // Otherwise a toast is enough.

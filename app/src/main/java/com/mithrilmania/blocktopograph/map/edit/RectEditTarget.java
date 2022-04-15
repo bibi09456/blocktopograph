@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.mithrilmania.blocktopograph.LogActivity;
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
+import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
 import com.mithrilmania.blocktopograph.chunk.Version;
 import com.mithrilmania.blocktopograph.map.Dimension;
 
@@ -72,7 +73,7 @@ public class RectEditTarget extends EditTarget {
                 int innerMinZ = (chunkZ == chunkMinZ) ? (mArea.top & 0xf) : 0;
                 int innerMaxZ = (chunkZ == chunkMaxZ) ? (mArea.bottom & 0xf) : 15;
 
-                Chunk chunk = mWorldData.getChunkStreaming(chunkX, chunkZ, dimension, false, Version.V1_2_PLUS);
+                Chunk chunk = mWorldData.getChunkStreaming(new ChunkKeyData(chunkX, chunkZ, -64, 320, dimension), false);
 
                 if (chunkBased) {
                     assert chunkBasedEdit != null;

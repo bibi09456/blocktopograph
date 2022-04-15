@@ -46,7 +46,7 @@ import java.io.File;
 public final class PicerFragment extends DialogFragment {
 
     public static final int MAX_LENGTH = 2048;
-    public static final int MAX_AREA = 64 * 64 * 256;
+    public static final int MAX_AREA = 64 * 64 * (-64 + 320);
     public static final int MAX_SCALE = 32;
     private FragPicerBinding mBinding;
     Rect mRange;
