@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.mithrilmania.blocktopograph.BuildConfig;
-import com.mithrilmania.blocktopograph.LogActivity;
+import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.block.Block;
 import com.mithrilmania.blocktopograph.block.BlockTemplate;
 import com.mithrilmania.blocktopograph.block.BlockTemplates;
+import com.mithrilmania.blocktopograph.block.OldBlock;
+import com.mithrilmania.blocktopograph.block.KnownBlockRepr;
 import com.mithrilmania.blocktopograph.chunk.terrain.TerrainSubChunk;
 import com.mithrilmania.blocktopograph.map.Biome;
 import com.mithrilmania.blocktopograph.map.Dimension;
@@ -59,7 +61,7 @@ public final class BedrockChunk extends Chunk {
                 this.data2D = ByteBuffer.wrap(rawData);
             } catch (Exception e) {
                 if (BuildConfig.DEBUG) {
-                    LogActivity.logWarn(this.getClass(), e);
+                    Log.d(this, e);
                 }
                 mIsError = true;
                 mIsVoid = true;
@@ -82,7 +84,7 @@ public final class BedrockChunk extends Chunk {
                 }
             } catch (Exception e) {
                 if (BuildConfig.DEBUG) {
-                    LogActivity.logWarn(this.getClass(), e);
+                    Log.d(this, e);
                 }
                 mErrorList[which] = true;
                 mVoidList[which] = true;
@@ -268,8 +270,8 @@ public final class BedrockChunk extends Chunk {
         for (int i = 0, mTerrainSubChunksLength = mTerrainSubChunks.length; i < mTerrainSubChunksLength; i++) {
             TerrainSubChunk subChunk = mTerrainSubChunks[i];
             if (subChunk == null || mVoidList[i] || !mDirtyList[i]) continue;
-            //LogActivity.d(this,"Saving "+i);
-            subChunk.save(worldData, chunkKeyData, i);
+            //Log.d(this,"Saving "+i);
+            subChunk.save(worldData, mChunkX, mChunkZ, mDimension, i);
         }
     }
 }

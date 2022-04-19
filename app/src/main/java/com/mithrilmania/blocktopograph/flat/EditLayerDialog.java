@@ -13,9 +13,10 @@ import androidx.databinding.DataBindingUtil;
 
 import com.andreabaccega.formedittextvalidator.Validator;
 import com.andreabaccega.widget.FormEditText;
-import com.mithrilmania.blocktopograph.LogActivity;
+import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.block.BlockTemplate;
+import com.mithrilmania.blocktopograph.block.ListingBlock;
 import com.mithrilmania.blocktopograph.databinding.DialogEditLayerBinding;
 import com.mithrilmania.blocktopograph.util.UiUtil;
 
@@ -48,6 +49,7 @@ public final class EditLayerDialog extends AppCompatActivity {
         }
         Serializable ser = intent.getSerializableExtra(EXTRA_KEY_LIST_LAYER);
         if (!(ser instanceof Layer)) {
+            Log.d(this, "wtf?");
             finish();
             return;
         }

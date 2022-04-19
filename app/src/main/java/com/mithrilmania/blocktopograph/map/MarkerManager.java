@@ -2,7 +2,7 @@ package com.mithrilmania.blocktopograph.map;
 
 import android.util.LongSparseArray;
 
-import com.mithrilmania.blocktopograph.LogActivity;
+import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.block.KnownBlockRepr;
 import com.mithrilmania.blocktopograph.map.marker.AbstractMarker;
 import com.mithrilmania.blocktopograph.map.marker.CustomNamedBitmapProvider;
@@ -134,12 +134,12 @@ public class MarkerManager {
                         }
                     } catch (Exception e) {
                         //ok, probably a comment or something, just ignore
-                        LogActivity.logError(this.getClass(), "Invalid line in marker file: " + line);
+                        Log.d(this, "Invalid line in marker file: " + line);
                     }
                 }
                 br.close();
             } catch (IOException e) {
-                LogActivity.logError(this.getClass(), e);
+                e.printStackTrace();
             }
         }
 
@@ -166,7 +166,7 @@ public class MarkerManager {
         try {
 
             if (markerFile.createNewFile())
-                LogActivity.logInfo(this.getClass(), "Created " + this.markerFile.getAbsolutePath());
+                Log.d(this, "Created " + this.markerFile.getAbsolutePath());
 
             //append to file
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(this.markerFile, false)));

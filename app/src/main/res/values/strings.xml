@@ -484,7 +484,7 @@
     <string name="general_delete">Delete</string>
     <string name="backup_delete_caption">Deleting Backup</string>
     <string name="backup_delete_warn">You are deleting the backup. Make sure you picked the right one.</string>
-    <string name="auto_backup_caption">Auto Backup In Progress…</string>
+    <string name="auto_backup_caption">Auto Backup In Progress...</string>
     <string name="auto_backup_name">[Auto]</string>
     <string name="world_name_broken">Broken World</string>
     <string name="world_isn_t_found">World isn\'t found</string>

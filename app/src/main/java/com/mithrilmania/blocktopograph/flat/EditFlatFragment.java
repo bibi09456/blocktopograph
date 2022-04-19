@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.mithrilmania.blocktopograph.LogActivity;
+import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.block.BlockTemplates;
 import com.mithrilmania.blocktopograph.block.ListingBlock;
@@ -109,7 +109,7 @@ public final class EditFlatFragment extends Fragment {
                 if (activity == null) return null;
                 ListingBlock.B_1_STONE.getIcon(activity.getAssets());
             } catch (Exception e) {
-                LogActivity.logError(this.getClass(), e);
+                Log.d(this, e);
             }
             return null;
         }
@@ -128,7 +128,7 @@ public final class EditFlatFragment extends Fragment {
                 listView.setSwipeListener(thiz.mMeowAdapter);
                 thiz.mMeowAdapter.loadDefault();
             } catch (Exception e) {
-                LogActivity.logError(this.getClass(), e);
+                Log.d(this, e);
                 Activity activity = thiz.getActivity();
                 if (activity != null) UiUtil.toastError(activity);
             }

@@ -27,7 +27,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-import com.mithrilmania.blocktopograph.LogActivity;
+import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.WorldActivityInterface;
 import com.mithrilmania.blocktopograph.nbt.convert.NBTConstants;
@@ -73,7 +73,7 @@ public class EditorFragment extends Fragment {
 
 
         if (nbt == null) {
-            LogActivity.logWarn(this.getClass(), "No NBT data provided");
+            Log.e(this, "No NBT data provided");
             if (getActivity() == null) return null;
             //What are you doing!
             TextView textView = new TextView(getActivity());
@@ -115,7 +115,7 @@ public class EditorFragment extends Fragment {
             @Override
             public boolean onLongClick(final TreeNode node, final Object value) {
 
-                LogActivity.logInfo(this.getClass(), "NBT editor: Long click!");
+                Log.d(this, "NBT editor: Long click!");
 
 
                 //root tag has nbt as value
@@ -195,7 +195,7 @@ public class EditorFragment extends Fragment {
                                                 //or alert is cancelled
                                                 alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int whichButton) {
-                                                        LogActivity.logInfo(this.getClass(), "NBT tag creation cancelled");
+                                                        Log.d(this, "NBT tag creation cancelled");
                                                     }
                                                 });
 
@@ -243,7 +243,7 @@ public class EditorFragment extends Fragment {
                                                 //or alert is cancelled
                                                 alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int whichButton) {
-                                                        LogActivity.logInfo(this.getClass(), "NBT tag creation cancelled");
+                                                        Log.d(this, "NBT tag creation cancelled");
                                                     }
                                                 });
 
@@ -252,7 +252,7 @@ public class EditorFragment extends Fragment {
                                                 break;
                                             }
                                             default: {
-                                                LogActivity.logInfo(this.getClass(), "User clicked unknown NBTEditOption! " + option.name());
+                                                Log.d(this, "User clicked unknown NBTEditOption! " + option.name());
                                             }
                                         }
                                     } catch (Exception e) {
@@ -448,7 +448,7 @@ public class EditorFragment extends Fragment {
 
                                                 alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int whichButton) {
-                                                        LogActivity.logInfo(this.getClass(), "Cancelled rename NBT tag");
+                                                        Log.d(this, "Cancelled rename NBT tag");
                                                     }
                                                 });
 
@@ -535,7 +535,7 @@ public class EditorFragment extends Fragment {
                                                         //or alert is cancelled
                                                         alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                                                             public void onClick(DialogInterface dialog, int whichButton) {
-                                                                LogActivity.logInfo(this.getClass(), "NBT tag creation cancelled");
+                                                                Log.d(this, "NBT tag creation cancelled");
                                                             }
                                                         });
 
@@ -551,7 +551,7 @@ public class EditorFragment extends Fragment {
                                                 }
                                             }
                                             default: {
-                                                LogActivity.logInfo(this.getClass(), "User clicked unknown NBTEditOption! " + editOption.name());
+                                                Log.d(this, "User clicked unknown NBTEditOption! " + editOption.name());
                                             }
 
                                         }
@@ -598,6 +598,7 @@ public class EditorFragment extends Fragment {
 
                                                 Snackbar.make(view, "Saved NBT data!", Snackbar.LENGTH_LONG)
                                                         .setAction("Action", null).show();
+                                                Log.logFirebaseEvent(activity, Log.CustomFirebaseEvent.NBT_EDITOR_SAVE);
                                             } else {
                                                 Snackbar.make(view, "Error: failed to save the NBT data.", Snackbar.LENGTH_LONG)
                                                         .setAction("Action", null).show();
@@ -1041,6 +1042,8 @@ public class EditorFragment extends Fragment {
 
         Bundle bundle = new Bundle();
         bundle.putString("title", nbt.getRootTitle());
+
+        Log.logFirebaseEvent(getActivity(), Log.CustomFirebaseEvent.NBT_EDITOR_OPEN, bundle);
     }
 
     @Override

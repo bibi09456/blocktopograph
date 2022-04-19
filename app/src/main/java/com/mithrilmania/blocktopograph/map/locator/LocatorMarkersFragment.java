@@ -13,7 +13,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.mithrilmania.blocktopograph.LogActivity;
+import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.databinding.FragLocatorPlayersBinding;
@@ -126,7 +126,7 @@ public final class LocatorMarkersFragment extends LocatorPageFragment {
                 try {
                     markers = world.getMarkerManager().getMarkers();
                 } catch (Exception e) {
-                    LogActivity.logError(this.getClass(), e);
+                    Log.d(this, e);
                     return null;
                 }
 
@@ -135,12 +135,12 @@ public final class LocatorMarkersFragment extends LocatorPageFragment {
                 try {
                     return markers.toArray(new AbstractMarker[0]);
                 } catch (Exception e) {
-                    LogActivity.logError(this.getClass(), e);
+                    Log.d(this, e);
                     return null;
                 }
 
             } catch (Exception e) {
-                LogActivity.logError(this.getClass(), e);
+                Log.d(this, e);
                 return null;
             }
         }

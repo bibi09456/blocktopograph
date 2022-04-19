@@ -10,7 +10,7 @@ import android.view.ViewParent;
 import android.widget.EdgeEffect;
 
 import com.github.florent37.expansionpanel.ExpansionLayout;
-import com.mithrilmania.blocktopograph.LogActivity;
+import com.mithrilmania.blocktopograph.Log;
 
 import java.lang.reflect.Field;
 
@@ -70,7 +70,7 @@ public class MeowExpansionLayout extends ExpansionLayout {
             mEdgeEffect = edge;
             //post(this::doOverScroll);
         } catch (Exception e) {
-            LogActivity.logError(this.getClass(), e);
+            Log.d(this, e);
         }
     }
 
@@ -127,7 +127,7 @@ public class MeowExpansionLayout extends ExpansionLayout {
         if (parent instanceof ViewGroup) {
             float remaining = ((ViewGroup) parent).getMeasuredHeight() - getY();
             height = Math.min(remaining, height);
-            //LogActivity.d(this, "remaining: " + remaining + ", requested: " + height);
+            //Log.d(this, "remaining: " + remaining + ", requested: " + height);
             setHeight((int) height);
         }
     }
@@ -147,8 +147,8 @@ public class MeowExpansionLayout extends ExpansionLayout {
             fieldAnimator.setAccessible(true);
             fieldAnimator.set(this, animator);
             fieldAnimator.setAccessible(false);
-        } catch (Exception e) {
-            LogActivity.logError(this.getClass(), e);
+        } catch (Throwable e) {
+            Log.d(this, e);
         }
     }
 
@@ -159,8 +159,8 @@ public class MeowExpansionLayout extends ExpansionLayout {
             fieldAnimator.setAccessible(true);
             fieldAnimator.setBoolean(this, expanded);
             fieldAnimator.setAccessible(false);
-        } catch (Exception e) {
-            LogActivity.logError(this.getClass(), e);
+        } catch (Throwable e) {
+            Log.d(this, e);
         }
     }
 

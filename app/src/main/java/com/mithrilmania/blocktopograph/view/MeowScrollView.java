@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.widget.EdgeEffect;
 import android.widget.ScrollView;
 
-import com.mithrilmania.blocktopograph.LogActivity;
+import com.mithrilmania.blocktopograph.Log;
 
 import java.lang.reflect.Field;
 
@@ -51,7 +51,7 @@ public class MeowScrollView extends ScrollView {
             mEdgeEffect.setSize(20, 20);
             post(this::doOverScroll);
         } catch (Exception e) {
-            LogActivity.logError(this.getClass(), e);
+            Log.d(this, e);
         }
     }
 

@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
-import com.mithrilmania.blocktopograph.LogActivity;
+import com.mithrilmania.blocktopograph.Log;
 
 import org.apache.commons.io.FileUtils;
 
@@ -237,7 +237,7 @@ public class IoUtil {
             fos.close();
             return saveTo;
         } catch (Exception e) {
-            LogActivity.logError(IoUtil.class, e);
+            Log.d(IoUtil.class, e);
             if (fos != null) try {
                 fos.close();
             } catch (Exception ignore) {

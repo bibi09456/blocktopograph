@@ -7,19 +7,18 @@ import androidx.annotation.NonNull;
 
 public class WrappedApp extends Application implements Thread.UncaughtExceptionHandler {
 
-    private final Thread.UncaughtExceptionHandler mDefaultUEhan;
+    private Thread.UncaughtExceptionHandler mDefaultUEhan;
 
     private boolean mHasUnsatisfiedLinkErrorActivity;
 
     public WrappedApp() {
         mDefaultUEhan = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
-        LogActivity.cleanFile();
     }
 
     @Override
     public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
-        LogActivity.logError(this.getClass(), throwable);
+        Log.e(this, throwable);
         if (throwable instanceof UnsatisfiedLinkError) {
             if (!mHasUnsatisfiedLinkErrorActivity) {
                 Intent intent = new Intent(this, UnsatisfiedLinkErrorActivity.class);

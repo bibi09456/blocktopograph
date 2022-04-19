@@ -2,14 +2,18 @@ package com.mithrilmania.blocktopograph.block;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.util.NamedBitmapProvider;
 import com.mithrilmania.blocktopograph.util.NamedBitmapProviderHandle;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -1187,7 +1191,7 @@ public enum KnownBlockRepr implements NamedBitmapProviderHandle, NamedBitmapProv
 //                } catch (FileNotFoundException e) {
 //                    //TODO file-paths were generated from block names; some do not actually exist...
 //                } catch (Exception e) {
-//                    LogActivity.d(KnownBlockRepr.class, e);
+//                    Log.d(KnownBlockRepr.class, e);
 //                }
 //            }
 //        }

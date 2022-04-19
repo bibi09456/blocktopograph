@@ -5,7 +5,7 @@ import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.mithrilmania.blocktopograph.LogActivity;
+import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.util.IoUtil;
 
@@ -19,7 +19,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -33,11 +32,11 @@ public class WorldBackups {
     private static final String AUTO_DELETE = "auto_delete";
     // We're using this in file name so it should not be location-specific.
     @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HHmm-ss.SS'-'");
+    private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HHmm-SSss'-'");
     public boolean autoBackup;
     public boolean autoDelete = true;
     @NonNull
-    private final World mWorld;
+    private World mWorld;
 
     public WorldBackups(@NonNull World world) {
         mWorld = world;
@@ -59,11 +58,11 @@ public class WorldBackups {
         File cfg = getConfigFile();
         if (!cfg.isFile()) return;
         try {
-            JSONObject obj = new JSONObject(FileUtils.readFileToString(cfg, Charset.defaultCharset()));
+            JSONObject obj = new JSONObject(FileUtils.readFileToString(cfg));
             autoBackup = obj.getBoolean(AUTO_BACKUP);
             autoDelete = obj.getBoolean(AUTO_DELETE);
         } catch (Exception e) {
-            LogActivity.logError(this.getClass(), e);
+            Log.d(this, e);
         }
     }
 
@@ -88,9 +87,9 @@ public class WorldBackups {
             JSONObject obj = new JSONObject();
             obj.put(AUTO_BACKUP, autoBackup);
             obj.put(AUTO_DELETE, autoDelete);
-            FileUtils.writeStringToFile(getConfigFile(), obj.toString(4), Charset.defaultCharset());
+            FileUtils.writeStringToFile(getConfigFile(), obj.toString(4));
         } catch (Exception e) {
-            LogActivity.logError(this.getClass(), e);
+            Log.d(this, e);
         }
     }
 
@@ -100,9 +99,9 @@ public class WorldBackups {
         File file = new File(dir, "readme.txt");
         if (file.exists()) return;
         try {
-            FileUtils.writeStringToFile(file, readMe, Charset.defaultCharset());
+            FileUtils.writeStringToFile(file, readMe);
         } catch (IOException e) {
-            LogActivity.logWarn(this.getClass(), e);
+            Log.d(this, e);
         }
     }
 
@@ -111,14 +110,13 @@ public class WorldBackups {
             File bakDir = getBackupDir();
             if (IoUtil.makeSureDirIsDir(bakDir) != IoUtil.Errno.OK) return false;
             File zfile = IoUtil.getFileWithFirstAvailableName(bakDir, DATE_FORMAT.format(time) + name, ".zip", "(", ")");
-            assert zfile != null;
             ZipFile zip = new ZipFile(zfile);
             for (File file : Objects.requireNonNull(getFilesInWorldDirExceptBackupDir())) {
                 if (file.isDirectory()) zip.addFolder(file);
                 else zip.addFile(file);
             }
         } catch (Exception e) {
-            LogActivity.logError(this.getClass(), e);
+            Log.e(this, e);
             return false;
         }
         cleanOldBackups(time);
@@ -135,14 +133,14 @@ public class WorldBackups {
         try {
             zip.extractAll(mWorld.worldFolder.getAbsolutePath());
         } catch (ZipException e) {
-            LogActivity.logError(this.getClass(), e);
+            Log.d(this, e);
             return false;
         }
         return true;
     }
 
-    public void deleteBackup(@NonNull Backup backup) {
-        backup.file.delete();
+    public boolean deleteBackup(@NonNull Backup backup) {
+        return backup.file.delete();
     }
 
     public void cleanOldBackups(@NonNull Date now) {

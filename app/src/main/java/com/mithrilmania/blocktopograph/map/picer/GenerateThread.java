@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 
-import com.mithrilmania.blocktopograph.LogActivity;
+import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.map.Dimension;
 import com.mithrilmania.blocktopograph.map.edit.RectEditTarget;
@@ -84,7 +84,7 @@ class GenerateThread extends Thread {
                                     (chunk.chunkKeyData.getChunkPos(1) * 16 - area.top) * scale,
                                     scale, scale, paintSub.get(), wdata);
                         } catch (Exception e) {
-                            LogActivity.logError(this.getClass(), e);
+                            Log.d(this, e);
                         }
                     });
                     return 0;

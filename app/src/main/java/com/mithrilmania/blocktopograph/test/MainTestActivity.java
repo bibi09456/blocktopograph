@@ -18,11 +18,18 @@ import androidx.databinding.DataBindingUtil;
 import com.google.android.material.snackbar.Snackbar;
 import com.litl.leveldb.DB;
 import com.litl.leveldb.Iterator;
-import com.mithrilmania.blocktopograph.LogActivity;
+import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.WorldData;
+import com.mithrilmania.blocktopograph.block.OldBlock;
+import com.mithrilmania.blocktopograph.block.OldBlockRegistry;
+import com.mithrilmania.blocktopograph.block.KnownBlockRepr;
+import com.mithrilmania.blocktopograph.chunk.Chunk;
+import com.mithrilmania.blocktopograph.chunk.ChunkTag;
+import com.mithrilmania.blocktopograph.chunk.Version;
 import com.mithrilmania.blocktopograph.databinding.ActivityMainTestBinding;
+import com.mithrilmania.blocktopograph.map.Dimension;
 import com.mithrilmania.blocktopograph.nbt.convert.NBTConstants;
 import com.mithrilmania.blocktopograph.util.ConvertUtil;
 import com.mithrilmania.blocktopograph.util.IoUtil;
@@ -130,7 +137,7 @@ public final class MainTestActivity extends AppCompatActivity {
         try {
             mWorld.getWorldData().load();
         } catch (WorldData.WorldDataLoadException e) {
-            LogActivity.logError(this.getClass(), e);
+            Log.d(this, e);
             finish();
             return;
         }
@@ -161,13 +168,13 @@ public final class MainTestActivity extends AppCompatActivity {
             ret = wdata.db.get(key);
             wdata.closeDB();
         } catch (Exception e) {
-            LogActivity.logError(this.getClass(), e);
+            Log.d(this, e);
             ret = null;
         }
         try {
             wdata.closeDB();
         } catch (WorldData.WorldDBException e) {
-            LogActivity.logError(this.getClass(), e);
+            Log.d(this, e);
         }
         return ret;
     }
@@ -215,13 +222,13 @@ public final class MainTestActivity extends AppCompatActivity {
             }).create();
             dia.show();
         } catch (Exception e) {
-            LogActivity.logError(this.getClass(), e);
+            Log.d(this, e);
             printStackTraceInDialog(e);
         }
         try {
             wdata.closeDB();
         } catch (WorldData.WorldDBException e) {
-            LogActivity.logError(this.getClass(), e);
+            Log.d(this, e);
         }
     }
 
@@ -283,7 +290,7 @@ public final class MainTestActivity extends AppCompatActivity {
             try {
                 worldData.closeDB();
             } catch (WorldData.WorldDBException e) {
-                LogActivity.logError(this.getClass(), e);
+                Log.d(this, e);
             }
             return DB.fixLdb(worldData.db.getPath().getAbsolutePath());
         });
@@ -501,7 +508,7 @@ public final class MainTestActivity extends AppCompatActivity {
                 try {
                     dialog.dismiss();
                 } catch (Exception e) {
-                    LogActivity.logError(this.getClass(), e);
+                    Log.e(this, e);
                 }
             }
             Context context = mContext.get();
