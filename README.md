@@ -1,43 +1,41 @@
 # Blocktopograph
 
-![author](https://github.com/Templarian/MaterialDesign/blob/master/svg/account.svg)
+## Maintainer
 
-By *Proto Lambda*\(Link removed, as he asked to\), [@MithrilMania](https://github.com/MithrilMania),
-[@flagmaggot](https://github.com/flagmaggot) and many other community contributors, including translation.  
-This fork is the only one supporting MCPE 1.13+ for now.
+By *Proto Lambda*\(Link removed, as he asked to\) </br>
+[MithrilMania](https://github.com/MithrilMania) </br>
+[flagmaggot](https://github.com/flagmaggot) </br>
+[oO0oO0oO0o0o00](https://github.com/oO0oO0oO0o0o00) </br>
+[NguyenDuck](https://github.com/NguyenDuck) </br>
 
-## ![translate](https://github.com/Templarian/MaterialDesign/blob/master/svg/web.svg) Help improve translation
-[Click here](https://github.com/oO0oO0oO0o0o00/blocktopograph/blob/master/translation.md).
+## Help us improve translation
 
-## Update paused ?
+[Click here](translation.md). </br>
+Recommended use Android Studio Translation Editor for write translation easier.
 
-
-Translations and pull requests **will still be processed**, but we encourage you to
-take over this project and develope on your own.
-
-## ![download](https://github.com/Templarian/MaterialDesign/blob/master/svg/download.svg)Download
+## Download
 [![Google Play](https://lh3.googleusercontent.com/qF9r3ZjtgG-qyHdmjecArtKiulz1gmwL_xl9R3_fzk6igSeoN0wYbJSKEX5d_fxJRwYZJpHbqcLB3i9atl-9dOfUl9an7U43TfZ9PtQ=s0)](https://play.google.com/store/apps/details?id=rbq2012.blocktopograph)
+</br>
+And release page of the repository provides release version of the app. </br>
+[Releases Page](./realeases/)
 
-And release page of the repository provides debug version of the app.  
-<img src="arts/scr02.png" alt="screenshot" width="320"/>
-<img src="arts/scr03.png" alt="screenshot" width="320"/>
+## Build from sources
 
-## ![build](https://github.com/Templarian/MaterialDesign/blob/master/icons/svg/camera-front-variant.svg)Build
-
-Clone project in Android Studio: `File -> New -> Project from Version Control -> Git`  
-Install missing SDK components. Android Studio would give you the auto-fix options.  
+Clone project in Android Studio: `File -> New -> Project from Version Control -> Git` </br>
+Install missing SDK components. </br>
+Android Studio would give you the auto-fix options. </br>
 
 ### Release-Workflow
 
-The official Google-Play version is managed by @mithrilmania. The Release-signing keys are not available.
-You can build it as debug build or sign it with your own keys.
+The official Google-Play version is managed by @mithrilmania. </br>
+The Release-signing keys are not available. </br>
+You can build it as debug build or sign it with your own keys. </br>
 
-This Google-Play version will be updated after any significant and well-written feature additions and fixes.
+This Google-Play version will be updated after any significant and well-written feature additions and fixes. </br>
 
-Questions? *Proto* said he does not want to be bothered about this app anymore.
+Questions? *Proto* said he does not want to be bothered about this app anymore. </br>
 
-Issues and requests are welcome too, but please use the issue-tracker for this to keep things organized.
-
+Issues and requests are welcome too, but please use the issue-tracker for this to keep things organized. </br>
 
 ### Wiki
 
