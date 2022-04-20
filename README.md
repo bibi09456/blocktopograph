@@ -17,7 +17,7 @@ Recommended use Android Studio Translation Editor for write translation easier.
 [![Google Play](https://lh3.googleusercontent.com/qF9r3ZjtgG-qyHdmjecArtKiulz1gmwL_xl9R3_fzk6igSeoN0wYbJSKEX5d_fxJRwYZJpHbqcLB3i9atl-9dOfUl9an7U43TfZ9PtQ=s0)](https://play.google.com/store/apps/details?id=rbq2012.blocktopograph)
 </br>
 And release page of the repository provides release version of the app. </br>
-[Releases Page](./realeases/)
+[Releases Page](./releases/)
 
 ## Build from sources
 
