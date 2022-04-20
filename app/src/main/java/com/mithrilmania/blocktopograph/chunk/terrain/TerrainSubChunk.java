@@ -3,18 +3,13 @@ package com.mithrilmania.blocktopograph.chunk.terrain;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.block.Block;
 import com.mithrilmania.blocktopograph.block.BlockTemplate;
-import com.mithrilmania.blocktopograph.block.OldBlock;
 import com.mithrilmania.blocktopograph.map.Dimension;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class TerrainSubChunk {
 

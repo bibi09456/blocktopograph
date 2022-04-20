@@ -1,9 +1,6 @@
 package com.mithrilmania.blocktopograph.chunk;
 
-import android.os.Build;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.WorldData;
@@ -13,8 +10,6 @@ import com.mithrilmania.blocktopograph.map.Dimension;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.stream.IntStream;
 
 public abstract class Chunk {
 
@@ -58,6 +53,15 @@ public abstract class Chunk {
                     chunk = new VoidChunk(worldData, createOfVersion, chunkX, chunkZ, dimension);
                 }
                 break;
+            case V1_16_PLUS:
+                try {
+                    worldData.writeChunkData(chunkX, chunkZ, ChunkTag.GENERATOR_STAGE, dimension, (byte) 0, false, new byte[]{2, 0, 0, 0});
+                    worldData.writeChunkData(chunkX, chunkZ, ChunkTag.VERSION, dimension, (byte) 0, false, new byte[]{0x15});
+                    chunk = new BedrockChunk(worldData, createOfVersion, chunkX, chunkZ, dimension, true);
+                } catch (Exception e) {
+                    Log.d(Chunk.class, e);
+                    chunk = new VoidChunk(worldData, createOfVersion, chunkX, chunkZ, dimension);
+                }
             default:
                 chunk = new VoidChunk(worldData, createOfVersion, chunkX, chunkZ, dimension);
         }

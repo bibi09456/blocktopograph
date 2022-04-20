@@ -4,12 +4,17 @@ import android.app.Activity;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+
 import com.litl.leveldb.DB;
 import com.litl.leveldb.Iterator;
 import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.WorldData;
+import com.mithrilmania.blocktopograph.chunk.ChunkTag;
 import com.mithrilmania.blocktopograph.chunk.Version;
 import com.mithrilmania.blocktopograph.map.Dimension;
 import com.mithrilmania.blocktopograph.util.UiUtil;
@@ -17,11 +22,6 @@ import com.mithrilmania.blocktopograph.util.UiUtil;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Arrays;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
 
 class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
 

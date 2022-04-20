@@ -6,7 +6,6 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Streams;
 import com.mithrilmania.blocktopograph.BuildConfig;
@@ -17,7 +16,6 @@ import com.mithrilmania.blocktopograph.block.BlockTemplate;
 import com.mithrilmania.blocktopograph.block.BlockTemplates;
 import com.mithrilmania.blocktopograph.block.BlockType;
 import com.mithrilmania.blocktopograph.block.blockproperty.BlockProperty;
-import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
 import com.mithrilmania.blocktopograph.chunk.ChunkTag;
 import com.mithrilmania.blocktopograph.map.Dimension;
 import com.mithrilmania.blocktopograph.nbt.convert.NBTInputStream;
@@ -28,10 +26,6 @@ import com.mithrilmania.blocktopograph.nbt.tags.IntTag;
 import com.mithrilmania.blocktopograph.nbt.tags.StringTag;
 import com.mithrilmania.blocktopograph.nbt.tags.Tag;
 import com.mithrilmania.blocktopograph.util.LittleEndianOutputStream;
-
-import net.lingala.zip4j.io.inputstream.ZipInputStream;
-
-import org.checkerframework.checker.units.qual.C;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,9 +38,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.zip.ZipOutputStream;
 
 public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
 
@@ -383,6 +375,7 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
             return new Pair<>(palette.get(ind), renderPalette.get(ind));
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         private void write(@NonNull LittleEndianOutputStream stream) throws IOException {
 
             // Code length.

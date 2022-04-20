@@ -25,7 +25,7 @@ import java.util.List;
 public class WorldData {
 
     //another method for debugging, makes it easy to print a readable byte array
-    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    private final static char[] hexArray = "0123456789abcdef".toCharArray();
 
     public DB db;
 
@@ -38,12 +38,12 @@ public class WorldData {
         this.mOldBlockRegistry = new OldBlockRegistry(2048);
     }
 
-    static String bytesToHex(byte[] bytes, int start, int end) {
-        char[] hexChars = new char[(end - start)];
-        for (int j = start; j < end; j++) {
+    static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[(bytes.length) * 2];
+        for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
-            hexChars[(j - start)] = hexArray[v >>> 4];
-            hexChars[(j - start) + 1] = hexArray[v & 0x0F];
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
     }
@@ -170,9 +170,15 @@ public class WorldData {
         int baseKeyLength = dimension == Dimension.OVERWORLD ? 8 : 12;
         for (iterator.seekToFirst(); iterator.isValid() && count < 800; iterator.next(), count++) {
             byte[] key = iterator.getKey();
-            if (key.length > baseKeyLength && key.length <= baseKeyLength + 3 &&
-                    IntStream.range(0, baseKeyLength).allMatch(i -> key[i] == compareKey[i]))
-                db.delete(key);
+            boolean allMatched = false;
+            for (var i = 0; i < baseKeyLength; i++) {
+                if (key[i] == compareKey[i]) {
+                    if (i == baseKeyLength+1) allMatched = true;
+                } else {
+                    break;
+                }
+            }
+            if (key.length > baseKeyLength && key.length <= baseKeyLength + 3 && allMatched) db.delete(key);
         }
         iterator.close();
     }

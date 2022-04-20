@@ -1,8 +1,9 @@
 package com.mithrilmania.blocktopograph.map.marker;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
 
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.map.Dimension;

@@ -41,7 +41,6 @@ import com.mithrilmania.blocktopograph.util.IoUtil;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;

@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.litl.leveldb.Iterator;
-import com.mithrilmania.blocktopograph.chunk.Chunk;
 import com.mithrilmania.blocktopograph.map.Dimension;
 import com.mithrilmania.blocktopograph.map.MarkerManager;
 import com.mithrilmania.blocktopograph.nbt.convert.DataConverter;
@@ -74,7 +73,7 @@ public class World implements Serializable {
             worldName = this.worldFolder.getName();// legacy way of naming worlds
         else worldName = context.getString(R.string.world_name_broken);
 
-
+        logDBKeys();
     }
 
     public CompoundTag getLevel() {
