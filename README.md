@@ -8,6 +8,11 @@ By *Proto Lambda*\(Link removed, as he asked to\) </br>
 [oO0oO0oO0o0o00](https://github.com/oO0oO0oO0o0o00) </br>
 [NguyenDuck](https://github.com/NguyenDuck) </br>
 
+## Goals to be accomplished
+ - [ ] Separate things related to world Minecraft 
+ - [ ] User interface enhancement 
+ - [ ] Improved backward compatibility with older Minecraft world versions
+
 ## Help us improve translation
 
 [Click here](translation.md). </br>
