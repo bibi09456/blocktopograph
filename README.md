@@ -1,40 +1,41 @@
 # Blocktopograph
 
-![Maintainer](https://github.com/Templarian/MaterialDesign/blob/master/svg/account.svg)
+## Maintainer
 
-By *Proto Lambda*\(Link removed, as he asked to\)
-[MithrilMania](https://github.com/MithrilMania)
-[flagmaggot](https://github.com/flagmaggot)
-[oO0oO0oO0o0o00](https://github.com/oO0oO0oO0o0o00)
-[NguyenDuck](https://github.com/NguyenDuck)
+By *Proto Lambda*\(Link removed, as he asked to\) </br>
+[MithrilMania](https://github.com/MithrilMania) </br>
+[flagmaggot](https://github.com/flagmaggot) </br>
+[oO0oO0oO0o0o00](https://github.com/oO0oO0oO0o0o00) </br>
+[NguyenDuck](https://github.com/NguyenDuck) </br>
 
-## ![Translation](https://github.com/Templarian/MaterialDesign/blob/master/svg/web.svg) Help us improve translation
+## Help us improve translation
 
-[Click here](translation.md).
+[Click here](translation.md). </br>
 Recommended use Android Studio Translation Editor for write translation easier.
 
-## ![Download](https://github.com/Templarian/MaterialDesign/blob/master/svg/download.svg) Download
+## Download
 [![Google Play](https://lh3.googleusercontent.com/qF9r3ZjtgG-qyHdmjecArtKiulz1gmwL_xl9R3_fzk6igSeoN0wYbJSKEX5d_fxJRwYZJpHbqcLB3i9atl-9dOfUl9an7U43TfZ9PtQ=s0)](https://play.google.com/store/apps/details?id=rbq2012.blocktopograph)
-
-And release page of the repository provides release version of the app.
+</br>
+And release page of the repository provides release version of the app. </br>
 [Releases Page](./realeases/)
 
-## ![build](https://github.com/Templarian/MaterialDesign/blob/master/icons/svg/camera-front-variant.svg) Build from sources
+## Build from sources
 
-Clone project in Android Studio: `File -> New -> Project from Version Control -> Git`  
-Install missing SDK components. Android Studio would give you the auto-fix options.  
+Clone project in Android Studio: `File -> New -> Project from Version Control -> Git` </br>
+Install missing SDK components. </br>
+Android Studio would give you the auto-fix options. </br>
 
 ### Release-Workflow
 
-The official Google-Play version is managed by @mithrilmania. The Release-signing keys are not available.
-You can build it as debug build or sign it with your own keys.
+The official Google-Play version is managed by @mithrilmania. </br>
+The Release-signing keys are not available. </br>
+You can build it as debug build or sign it with your own keys. </br>
 
-This Google-Play version will be updated after any significant and well-written feature additions and fixes.
+This Google-Play version will be updated after any significant and well-written feature additions and fixes. </br>
 
-Questions? *Proto* said he does not want to be bothered about this app anymore.
+Questions? *Proto* said he does not want to be bothered about this app anymore. </br>
 
-Issues and requests are welcome too, but please use the issue-tracker for this to keep things organized.
-
+Issues and requests are welcome too, but please use the issue-tracker for this to keep things organized. </br>
 
 ### Wiki
 
