@@ -6,7 +6,6 @@ import android.graphics.Rect;
 
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
-import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
 import com.mithrilmania.blocktopograph.chunk.Version;
 import com.mithrilmania.blocktopograph.map.Dimension;
 
@@ -15,8 +14,8 @@ public class HeightmapRenderer implements MapRenderer {
 
     public void renderToBitmap(Chunk chunk, Canvas canvas, Dimension dimension, int chunkX, int chunkZ, int pX, int pY, int pW, int pL, Paint paint, WorldData worldData) throws Version.VersionException {
 
-        Chunk dataW = worldData.getChunk(new ChunkKeyData(chunkX - 1, chunkZ, dimension));
-        Chunk dataN = worldData.getChunk(new ChunkKeyData(chunkX, chunkZ - 1, dimension));
+        Chunk dataW = worldData.getChunk(chunkX - 1, chunkZ, dimension);
+        Chunk dataN = worldData.getChunk(chunkX, chunkZ - 1, dimension);
 
         boolean west = dataW != null && !dataW.isVoid(),
                 north = dataN != null && !dataN.isVoid();
@@ -35,13 +34,13 @@ public class HeightmapRenderer implements MapRenderer {
 
                 if (y < 0) continue;
 
-                yNorm = (float) y / (float) dimension.chunkHeighHighest;
+                yNorm = (float) y / (float) dimension.chunkH;
                 yNorm2 = yNorm * yNorm;
                 yNorm = ((6f * yNorm2) - (15f * yNorm) + 10f) * yNorm2 * yNorm;
 
-                yW = (x == 0) ? (west ? dataW.getHeightMapValue(dimension.chunkWidth - 1, z) : y)//chunk edge
+                yW = (x == 0) ? (west ? dataW.getHeightMapValue(dimension.chunkW - 1, z) : y)//chunk edge
                         : chunk.getHeightMapValue(x - 1, z);//within chunk
-                yN = (z == 0) ? (north ? dataN.getHeightMapValue(x, dimension.chunkLength - 1) : y)//chunk edge
+                yN = (z == 0) ? (north ? dataN.getHeightMapValue(x, dimension.chunkL - 1) : y)//chunk edge
                         : chunk.getHeightMapValue(x, z - 1);//within chunk
 
                 heightShading = SatelliteRenderer.getHeightShading(y, yW, yN);
@@ -51,9 +50,9 @@ public class HeightmapRenderer implements MapRenderer {
                 g = (int) (70f * heightShading);
                 b = (int) (256f * (1f - yNorm) / (yNorm + 1f));
 
-                r = r < 0 ? 0 : Math.min(r, 255);
-                g = g < 0 ? 0 : Math.min(g, 255);
-                b = b < 0 ? 0 : Math.min(b, 255);
+                r = r < 0 ? 0 : r > 255 ? 255 : r;
+                g = g < 0 ? 0 : g > 255 ? 255 : g;
+                b = b < 0 ? 0 : b > 255 ? 255 : b;
 
 
                 color = (r << 16) | (g << 8) | b | 0xff000000;

@@ -116,7 +116,7 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
 
     @NonNull
     @Override
-    public BlockTemplate getBlockTemplate(Integer x, Integer y, Integer z, Integer layer) {
+    public BlockTemplate getBlockTemplate(int x, int y, int z, int layer) {
         if (mIsError) return BlockTemplates.getAirTemplate();
         BlockStorage storage = mStorages[layer];
         if (storage == null) return BlockTemplates.getAirTemplate();
@@ -125,14 +125,15 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
 
     @NonNull
     @Override
-    public Block getBlock(Integer x, Integer y, Integer z, Integer layer) {
+    public Block getBlock(int x, int y, int z, int layer) {
         if (mIsError) throw new RuntimeException();
         BlockStorage storage = mStorages[layer];
         if (storage == null) return BlockTemplates.getAirTemplate().getBlock();
-        return storage.getBlock(x, y, z).first;    }
+        return storage.getBlock(x, y, z).first;
+    }
 
     @Override
-    public void setBlock(Integer x, Integer y, Integer z, Integer layer, @NonNull Block block) {
+    public void setBlock(int x, int y, int z, int layer, @NonNull Block block) {
 
         // Has error or not supported.
         if (mIsError || (layer > 0 && !mIsDualStorageSupported)) throw new RuntimeException();
@@ -152,17 +153,24 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
     }
 
     @Override
-    public Integer getBlockLightValue(Integer x, Integer y, Integer z) {
+    public int getBlockLightValue(int x, int y, int z) {
         return 0;
     }
 
     @Override
-    public Integer getSkyLightValue(Integer x, Integer y, Integer z) {
+    public int getSkyLightValue(int x, int y, int z) {
         return 0;
     }
 
+    private BlockStorage createEmptyBlockStorage(int which) {
+        BlockStorage storage = BlockStorage.createNew();
+        mStorages[which] = storage;
+        return storage;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void save(WorldData worldData, ChunkKeyData chunkKeyData, Integer which) throws WorldData.WorldDBException, IOException {
+    public void save(WorldData worldData, int chunkX, int chunkZ, Dimension dimension, int which) throws WorldData.WorldDBException, IOException {
 
         if (mIsError) return;
 
@@ -183,62 +191,8 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
         leos.flush();
 
         byte[] arr = baos.toByteArray();
-        worldData.writeChunkData(chunkKeyData, ChunkTag.SUB_CHUNK_PREFIX, which.byteValue(), true, arr);
+        worldData.writeChunkData(chunkX, chunkZ, ChunkTag.TERRAIN, dimension, (byte) which, true, arr);
 
-    }
-
-    V1d2d13TerrainSubChunk(@NonNull ByteBuffer raw) {
-
-        raw.order(ByteOrder.LITTLE_ENDIAN);
-        mStorages = new BlockStorage[2];
-
-        // The first byte indicates version.
-        switch (raw.get(0)) {
-            // 1: Only one BlockStorage starting from the next byte.
-            case 1:
-                mIsDualStorageSupported = false;
-                raw.position(1);
-                try {
-                    mStorages[0] = BlockStorage.loadAndMoveForward(raw);
-                } catch (IOException e) {
-                    if (BuildConfig.DEBUG) {
-                        LogActivity.logError(this.getClass(), e);
-                    }
-                    mIsError = true;
-                }
-                break;
-            // 8: One or more BlockStorage's, next byte is the count.
-            case 8:
-                mIsDualStorageSupported = true;
-                raw.position(1);
-                int count = raw.get();
-                if (count < 1) {
-                    mIsError = true;
-                    return;
-                }
-                try {
-                    mStorages[0] = BlockStorage.loadAndMoveForward(raw);
-                    if (count > 1) mStorages[1] = BlockStorage.loadAndMoveForward(raw);
-                } catch (IOException e) {
-                    if (BuildConfig.DEBUG) {
-                        LogActivity.logError(this.getClass(), e);
-                    }
-                    mIsError = true;
-                }
-                break;
-            default:
-                mIsError = true;
-                return;
-        }
-        mHasBlockLight = false;
-        mHasSkyLight = false;
-    }
-
-
-    private BlockStorage createEmptyBlockStorage(Integer which) {
-        BlockStorage storage = BlockStorage.createNew();
-        mStorages[which] = storage;
-        return storage;
     }
 
     private static class BlockStorage {

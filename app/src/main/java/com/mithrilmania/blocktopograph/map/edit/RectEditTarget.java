@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
-import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
+import com.mithrilmania.blocktopograph.chunk.ChunkTag;
 import com.mithrilmania.blocktopograph.chunk.Version;
 import com.mithrilmania.blocktopograph.map.Dimension;
 
@@ -73,7 +73,17 @@ public class RectEditTarget extends EditTarget {
                 int innerMinZ = (chunkZ == chunkMinZ) ? (mArea.top & 0xf) : 0;
                 int innerMaxZ = (chunkZ == chunkMaxZ) ? (mArea.bottom & 0xf) : 15;
 
-                Chunk chunk = mWorldData.getChunkStreaming(new ChunkKeyData(chunkX, chunkZ, -64, 320, dimension), false);
+                Chunk chunk = mWorldData.getChunkStreaming(chunkX, chunkZ, dimension, false, Version.LATEST_SUPPORTED_VERSION);
+
+                try {
+                    byte[] versionPre16Data = mWorldData.getChunkData(chunkX, chunkZ, ChunkTag.VERSION_PRE16, dimension);
+                    byte[] versionData = mWorldData.getChunkData(chunkX, chunkZ, ChunkTag.VERSION_PRE16, dimension);
+                    if (versionPre16Data != null) {
+                        chunk = mWorldData.getChunkStreaming(chunkX, chunkZ, dimension, false, Version.getVersion(versionPre16Data));
+                    } else if (versionData != null) {
+                        chunk = mWorldData.getChunkStreaming(chunkX, chunkZ, dimension, false, Version.getVersion(versionData));
+                    }
+                } catch (Exception ignored) { }
 
                 if (chunkBased) {
                     int result = chunkBasedEdit.edit(chunk, innerMinX, innerMaxX, yLowest, yHighest, innerMinZ, innerMaxZ);

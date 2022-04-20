@@ -30,7 +30,6 @@ public abstract class TerrainSubChunk {
 
     @Nullable
     public static TerrainSubChunk create(@NonNull byte[] rawData) {
-        LogActivity.logInfo(TerrainSubChunk.class, Arrays.toString(rawData));
         TerrainSubChunk subChunk;
         ByteBuffer byteBuffer = ByteBuffer.wrap(rawData);
         switch (rawData[0]) {
@@ -45,7 +44,7 @@ public abstract class TerrainSubChunk {
     }
 
     @Nullable
-    public static TerrainSubChunk createEmpty(Integer preferredVersion) {
+    public static TerrainSubChunk createEmpty(int preferredVersion) {
         TerrainSubChunk subChunk;
         switch (preferredVersion) {
             case 1:
@@ -65,27 +64,28 @@ public abstract class TerrainSubChunk {
 //    }
 
     @NonNull
-    abstract public BlockTemplate getBlockTemplate(Integer x, Integer y, Integer z, Integer layer);
+    abstract public BlockTemplate getBlockTemplate(int x, int y, int z, int layer);
 
     @NonNull
-    abstract public Block getBlock(Integer x, Integer y, Integer z, Integer layer);
+    abstract public Block getBlock(int x, int y, int z, int layer);
 
-    abstract public void setBlock(Integer x, Integer y, Integer z, Integer layer, @NonNull Block block);
+    abstract public void setBlock(int x, int y, int z, int layer, @NonNull Block block);
 
-    abstract public Integer getBlockLightValue(Integer x, Integer y, Integer z);
+    abstract public int getBlockLightValue(int x, int y, int z);
 
-    abstract public Integer getSkyLightValue(Integer x, Integer y, Integer z);
+    abstract public int getSkyLightValue(int x, int y, int z);
 
-    protected static Integer getOffset(Integer x, Integer y, Integer z) {
+    protected static final int getOffset(int x, int y, int z) {
         return (((x << 4) | z) << 4) | y;
     }
 
-    public final Boolean hasBlockLight() {
+
+    public final boolean hasBlockLight() {
         return mHasBlockLight;
     }
 
 
-    public final Boolean isError() {
+    public final boolean isError() {
         return mIsError;
     }
 
@@ -98,6 +98,6 @@ public abstract class TerrainSubChunk {
 //        return oldBlockRegistry;
 //    }
 
-    abstract public void save(WorldData worldData, ChunkKeyData chunkKeyData, Integer which) throws WorldData.WorldDBException, IOException;
+    abstract public void save(WorldData worldData, int chunkX, int chunkZ, Dimension dimension, int which) throws WorldData.WorldDBException, IOException;
 
 }

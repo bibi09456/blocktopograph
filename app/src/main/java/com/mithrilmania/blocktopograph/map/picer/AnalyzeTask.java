@@ -27,6 +27,7 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
 
     private final WeakReference<PicerFragment> owner;
     private boolean hasWrongChunks;
+    private boolean hasOldChunks;
     private AlertDialog waitDialog;
 
     AnalyzeTask(PicerFragment owner) {
@@ -66,7 +67,6 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
             try {
                 worldData.openDB();
             } catch (Exception e) {
-                LogActivity.logError(this.getClass(), e);
                 break getDb;
             }
             db = worldData.db;
@@ -74,14 +74,17 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
         if (db == null) return null;
 
         Dimension dimension = owner.mDimension;
-        int DimensionVersionKeyLength;
+        int verKeyLenOfDim;
         switch (dimension) {
+            case OVERWORLD:
+                verKeyLenOfDim = 9;
+                break;
             case NETHER:
             case END:
-                DimensionVersionKeyLength = 14;
+                verKeyLenOfDim = 13;
                 break;
             default:
-                DimensionVersionKeyLength = 10;
+                return null;
         }
 
         // We used to separate world into areas or clusters, now that
@@ -93,29 +96,28 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
 
         // Iterate over all items.
         try {
-//            db.put(new byte[]{0, 1, 2, 3, 0, 1, 2, 3, 118}, new byte[]{0});
+            db.put(new byte[]{0, 1, 2, 3, 0, 1, 2, 3, 118}, new byte[]{0});
             Iterator iterator = db.iterator();
-            boolean isCancelled = false;
+            boolean cancelled = false;
             int loopCount = 0;
             loop:
             for (iterator.seekToFirst(); iterator.isValid(); iterator.next(), loopCount++) {
 
                 if (isCancelled()) {
-                isCancelled = true;
+                    cancelled = true;
                     break;
                 }
 
                 // Is it a key for a chunk of current dim's version record?
                 byte[] key = iterator.getKey();
-                LogActivity.logInfo(this.getClass(), Arrays.toString(key));
-                if (key.length != DimensionVersionKeyLength) continue;
-                if ((key[DimensionVersionKeyLength - 1] != (byte) 0x76) || (key[DimensionVersionKeyLength - 1] != (byte) 0x2c)) continue;
+                if (key.length != verKeyLenOfDim) continue;
+                if (key[verKeyLenOfDim - 1] != ChunkTag.VERSION_PRE16.dataID || key[verKeyLenOfDim - 1] != ChunkTag.VERSION.dataID) continue;
                 ByteBuffer byteBuffer = ByteBuffer.wrap(key);
                 byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
                 int x = byteBuffer.getInt();
                 int z = byteBuffer.getInt();
                 // Wrong dim.
-                if (DimensionVersionKeyLength == 13 && dimension.id != byteBuffer.getInt()) continue;
+                if (verKeyLenOfDim == 13 && dimension.id != byteBuffer.getInt()) continue;
                 byte[] value = iterator.getValue();
                 Version version = Version.getVersion(value);
                 // Record unsupported stuff and skip.
@@ -123,6 +125,9 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
                     case ERROR:
                     case NULL:
                         hasWrongChunks = true;
+                        continue loop;
+                    case OLD_LIMITED:
+                        hasOldChunks = true;
                         continue loop;
                 }
 
@@ -201,9 +206,11 @@ class AnalyzeTask extends AsyncTask<Void, Void, Rect> {
         if (rect != null) {
             owner.onAnalyzeDone(rect);
 
-        } else if (hasWrongChunks) {
+        } else if (hasWrongChunks || hasOldChunks) {
             // Size 0 with exception, dismiss and show exception in dialog.
-            @StringRes int strId = R.string.picer_failed_old;
+            @StringRes int strId;
+            if (hasWrongChunks) strId = R.string.picer_failed_corrupt;
+            else strId = R.string.picer_failed_old;
             owner.showFailureDialogAndDismiss(strId);
 
             // Otherwise a toast is enough.

@@ -1,18 +1,14 @@
 package com.mithrilmania.blocktopograph;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.util.LruCache;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 import com.litl.leveldb.DB;
 import com.litl.leveldb.Iterator;
 import com.mithrilmania.blocktopograph.block.OldBlockRegistry;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
-import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
 import com.mithrilmania.blocktopograph.chunk.ChunkTag;
 import com.mithrilmania.blocktopograph.chunk.Version;
 import com.mithrilmania.blocktopograph.map.Dimension;
@@ -20,11 +16,8 @@ import com.mithrilmania.blocktopograph.map.Dimension;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.Vector;
-import java.util.stream.IntStream;
 
 /**
  * Wrapper around level.dat world spec en levelDB database.
@@ -36,8 +29,8 @@ public class WorldData {
 
     public DB db;
 
-    private final WeakReference<World> world;
-    private final LruCache<Key, Chunk> chunks = new ChunkCache(this, 256);
+    private WeakReference<World> world;
+    private LruCache<Key, Chunk> chunks = new ChunkCache(this, 256);
     public final OldBlockRegistry mOldBlockRegistry;
 
     public WorldData(World world) {
@@ -55,11 +48,9 @@ public class WorldData {
         return new String(hexChars);
     }
 
-    private static byte[] getChunkDataKey(ChunkKeyData chunkKeyData, ChunkTag type, byte subChunk, boolean asSubChunk) {
+    private static byte[] getChunkDataKey(int x, int z, ChunkTag type, Dimension dimension, byte subChunk, boolean asSubChunk) {
         byte[] key;
-        Integer x = chunkKeyData.chunkPos.get(0);
-        Integer z = chunkKeyData.chunkPos.get(1);
-        if (chunkKeyData.dimension == Dimension.OVERWORLD) {
+        if (dimension == Dimension.OVERWORLD) {
             key = new byte[asSubChunk ? 10 : 9];
             System.arraycopy(getReversedBytes(x), 0, key, 0, 4);
             System.arraycopy(getReversedBytes(z), 0, key, 4, 4);
@@ -69,7 +60,7 @@ public class WorldData {
             key = new byte[asSubChunk ? 14 : 13];
             System.arraycopy(getReversedBytes(x), 0, key, 0, 4);
             System.arraycopy(getReversedBytes(z), 0, key, 4, 4);
-            System.arraycopy(getReversedBytes(chunkKeyData.dimension.id), 0, key, 8, 4);
+            System.arraycopy(getReversedBytes(dimension.id), 0, key, 8, 4);
             key[12] = type.dataID;
             if (asSubChunk) key[13] = subChunk;
         }
@@ -103,14 +94,14 @@ public class WorldData {
                 throw new WorldDataLoadException("World-db folder is not writable! World-db folder: " + dbFile.getAbsolutePath());
         }
 
+        Log.d(this, "WorldFolder: " + world.worldFolder.getAbsolutePath());
         if (dbFile.listFiles() == null)
             throw new WorldDataLoadException("Failed loading world-db: cannot list files in worldfolder");
 
-        try {
-            this.db = new DB(dbFile);
-        } catch (Exception e) {
-            LogActivity.logError(this.getClass(), e);
+        for (File dbEntry : dbFile.listFiles()) {
+            Log.d(this, "File in db: " + dbEntry.getAbsolutePath());
         }
+        this.db = new DB(dbFile);
     }
 
     //open db to make it available for this app
@@ -122,7 +113,8 @@ public class WorldData {
             try {
                 this.db.open();
             } catch (Exception e) {
-                LogActivity.logError(this.getClass(), e);
+
+                throw new WorldDBException("DB could not be opened! " + e.getMessage());
             }
         }
 
@@ -141,40 +133,41 @@ public class WorldData {
         }
     }
 
-    public byte[] getChunkData(ChunkKeyData chunkKeyData, ChunkTag type, byte subChunk, boolean asSubChunk) throws WorldDBException, WorldDBLoadException {
+    public byte[] getChunkData(int x, int z, ChunkTag type, Dimension dimension, byte subChunk, boolean asSubChunk) throws WorldDBException, WorldDBLoadException {
 
         //ensure that the db is opened
         this.openDB();
 
-        byte[] chunkKey = getChunkDataKey(chunkKeyData, type, subChunk, asSubChunk);
-        LogActivity.logInfo(this.getClass(), "Getting cX: "+chunkKeyData.getChunkPos(0)+" cZ: "+chunkKeyData.getChunkPos(1)+ " with key: "+bytesToHex(chunkKey, 0, chunkKey.length));
-        return db.get(chunkKey);
+        byte[] chunkKey = getChunkDataKey(x, z, type, dimension, subChunk, asSubChunk);
+        Log.d(this,"Getting cX: "+x+" cZ: "+z+" with key: "+ type.name());
+        byte[] result = db.get(chunkKey);
+        if (BuildConfig.DEBUG) Log.d(this, Arrays.toString(result));
+        return result;
     }
 
-    public byte[] getChunkData(ChunkKeyData chunkKeyData, ChunkTag type) throws WorldDBException, WorldDBLoadException {
-        return getChunkData(chunkKeyData, type, (byte) 0, false);
+    public byte[] getChunkData(int x, int z, ChunkTag type, Dimension dimension) throws WorldDBException, WorldDBLoadException {
+        return getChunkData(x, z, type, dimension, (byte) 0, false);
     }
 
-    public void writeChunkData(ChunkKeyData chunkKeyData, ChunkTag type, byte subChunk, boolean asSubChunk, byte[] chunkData) throws WorldDBException {
+    public void writeChunkData(int x, int z, ChunkTag type, Dimension dimension, byte subChunk, boolean asSubChunk, byte[] chunkData) throws WorldDBException {
         //ensure that the db is opened
         this.openDB();
 
-        db.put(getChunkDataKey(chunkKeyData, type, subChunk, asSubChunk), chunkData);
+        db.put(getChunkDataKey(x, z, type, dimension, subChunk, asSubChunk), chunkData);
     }
 
-    public void removeChunkData(ChunkKeyData chunkKeyData, ChunkTag type, byte subChunk, boolean asSubChunk) throws WorldDBException {
+    public void removeChunkData(int x, int z, ChunkTag type, Dimension dimension, byte subChunk, boolean asSubChunk) throws WorldDBException {
         //ensure that the db is opened
         this.openDB();
 
-        db.delete(getChunkDataKey(chunkKeyData, type, subChunk, asSubChunk));
+        db.delete(getChunkDataKey(x, z, type, dimension, subChunk, asSubChunk));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void removeFullChunk(ChunkKeyData chunkKeyData) {
+    public void removeFullChunk(int x, int z, Dimension dimension) {
         var iterator = db.iterator();
         int count = 0;
-        var compareKey = getChunkDataKey(chunkKeyData, ChunkTag.DATA_2D, (byte) 0, false);
-        int baseKeyLength = chunkKeyData.dimension == Dimension.OVERWORLD ? 8 : 12;
+        var compareKey = getChunkDataKey(x, z, ChunkTag.DATA_2D, dimension, (byte) 0, false);
+        int baseKeyLength = dimension == Dimension.OVERWORLD ? 8 : 12;
         for (iterator.seekToFirst(); iterator.isValid() && count < 800; iterator.next(), count++) {
             byte[] key = iterator.getKey();
             if (key.length > baseKeyLength && key.length <= baseKeyLength + 3 &&
@@ -184,21 +177,22 @@ public class WorldData {
         iterator.close();
     }
 
-    public Chunk getChunk(ChunkKeyData chunkKeyData, Boolean createIfMissing) {
-        Key key = new Key(chunkKeyData);
+    public Chunk getChunk(int cX, int cZ, Dimension dimension, boolean createIfMissing, Version createOfVersion) {
+        Key key = new Key(cX, cZ, dimension);
         key.createIfMissng = createIfMissing;
+        key.createOfVersion = createOfVersion;
         return chunks.get(key);
     }
 
-    public Chunk getChunk(ChunkKeyData chunkKeyData) {
-        Key key = new Key(chunkKeyData);
+    public Chunk getChunk(int cX, int cZ, Dimension dimension) {
+        Key key = new Key(cX, cZ, dimension);
         return chunks.get(key);
     }
 
     // Avoid using cache for stream like operations.
     // Caller shall lock cache before operation and invalidate cache afterwards.
-    public Chunk getChunkStreaming(ChunkKeyData chunkKeyData, Boolean createIfMissing) {
-        return Chunk.create(this, chunkKeyData, createIfMissing);
+    public Chunk getChunkStreaming(int cx, int cz, Dimension dimension, boolean createIfMissing, Version createOfVersion) {
+        return Chunk.create(this, cx, cz, dimension, createIfMissing, createOfVersion);
     }
 
     public void resetCache() {
@@ -213,7 +207,7 @@ public class WorldData {
     public List<String> getDBKeysStartingWith(String startWith) {
         Iterator it = db.iterator();
 
-        LinkedList<String> items = new LinkedList<>();
+        ArrayList<String> items = new ArrayList<>();
         for (it.seekToFirst(); it.isValid(); it.next()) {
             byte[] key = it.getKey();
             if (key == null) continue;
@@ -227,9 +221,9 @@ public class WorldData {
 
     private static class ChunkCache extends LruCache<Key, Chunk> {
 
-        private final WeakReference<WorldData> worldData;
+        private WeakReference<WorldData> worldData;
 
-        ChunkCache(WorldData worldData, Integer maxSize) {
+        ChunkCache(WorldData worldData, int maxSize) {
             super(maxSize);
             this.worldData = new WeakReference<>(worldData);
         }
@@ -239,7 +233,7 @@ public class WorldData {
             try {
                 oldValue.save();
             } catch (Exception e) {
-                LogActivity.logError(this.getClass(), e);
+                Log.d(this, e);
             }
         }
 
@@ -248,32 +242,34 @@ public class WorldData {
         protected Chunk create(Key key) {
             WorldData worldData = this.worldData.get();
             if (worldData == null) return null;
-            return Chunk.create(worldData, key.chunkKeyData, key.createIfMissng);
+            return Chunk.create(worldData, key.x, key.z, key.dim, key.createIfMissng, key.createOfVersion);
         }
     }
 
     static class Key {
 
-        public ChunkKeyData chunkKeyData;
-        public Boolean createIfMissng;
+        public int x, z;
+        public Dimension dim;
+        public boolean createIfMissng;
+        public Version createOfVersion;
 
-        Key(@NonNull ChunkKeyData chunkKeyData) {
-            this.chunkKeyData = chunkKeyData;
+        Key(int x, int z, Dimension dim) {
+            this.x = x;
+            this.z = z;
+            this.dim = dim;
         }
 
         @Override
         public int hashCode() {
-            return Integer.getInteger(
-                    chunkKeyData.getChunkPos(0).toString().concat(
-                    chunkKeyData.getChunkPos(1).toString()).concat(
-                    chunkKeyData.dimension.id.toString()));
+            return (x * 31 + z) * 31 + dim.id;
         }
 
         @Override
         public boolean equals(Object obj) {
             if (!(obj instanceof Key)) return false;
             Key another = (Key) obj;
-            return (this.hashCode() == another.hashCode());
+            return ((x == another.x) && (z == another.z) && (dim != null)
+                    && (another.dim != null) && (dim.id == another.dim.id));
         }
     }
 

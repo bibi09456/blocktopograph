@@ -13,7 +13,7 @@ public class Player {
     public static final String LOCAL_PLAYER_NAME = "~local_player";
 
     private final boolean isLocal;
-    private final String dbName;
+    private String dbName;
     private DimensionVector3<Float> position;
 
     private Player(boolean isLocal, String dbName) {
@@ -50,7 +50,7 @@ public class Player {
             return context.getString(R.string.map_locator_player_pos_unknown);
         return context.getString(R.string.player_position_desc,
                 Math.round(position.x), Math.round(position.y),
-                Math.round(position.z), position.dimension.getName());
+                Math.round(position.z), context.getString(position.dimension.getName()));
     }
 
     public void setPosition(DimensionVector3<Float> position) {

@@ -79,9 +79,9 @@ class GenerateThread extends Thread {
                     }
                     executor.execute(() -> {
                         try {
-                            renderer.renderToBitmap(chunk, canvas, dimension, chunk.chunkKeyData.getChunkPos(0), chunk.chunkKeyData.getChunkPos(1),
-                                    (chunk.chunkKeyData.getChunkPos(0) * 16 - area.left) * scale,
-                                    (chunk.chunkKeyData.getChunkPos(1) * 16 - area.top) * scale,
+                            renderer.renderToBitmap(chunk, canvas, dimension, chunk.mChunkX, chunk.mChunkZ,
+                                    (chunk.mChunkX * 16 - area.left) * scale,
+                                    (chunk.mChunkZ * 16 - area.top) * scale,
                                     scale, scale, paintSub.get(), wdata);
                         } catch (Exception e) {
                             Log.d(this, e);

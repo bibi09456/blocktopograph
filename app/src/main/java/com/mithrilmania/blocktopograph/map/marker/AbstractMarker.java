@@ -31,7 +31,7 @@ public class AbstractMarker implements NamedBitmapProviderHandle {
     public String getPositionDescription(Context context) {
         return context.getString(R.string.player_position_desc,
                 Math.round(x), Math.round(y),
-                Math.round(z), dimension.getName());
+                Math.round(z), context.getString(dimension.getName()));
     }
 
     public int getChunkX() {

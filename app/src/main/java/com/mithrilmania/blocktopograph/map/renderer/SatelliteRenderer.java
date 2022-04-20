@@ -94,8 +94,8 @@ public class SatelliteRenderer implements MapRenderer {
 
     public void renderToBitmap(Chunk chunk, Canvas canvas, Dimension dimension, int chunkX, int chunkZ, int pX, int pY, int pW, int pL, Paint paint, WorldData worldData) throws Version.VersionException {
 
-        Chunk dataW = worldData.getChunk(new ChunkKeyData(chunkX - 1, chunkZ, dimension));
-        Chunk dataN = worldData.getChunk(new ChunkKeyData(chunkX, chunkZ - 1, dimension));
+        Chunk dataW = worldData.getChunk(chunkX - 1, chunkZ, dimension);
+        Chunk dataN = worldData.getChunk(chunkX, chunkZ - 1, dimension);
 
         boolean west = dataW != null && !dataW.isVoid(),
                 north = dataN != null && !dataN.isVoid();
@@ -107,9 +107,9 @@ public class SatelliteRenderer implements MapRenderer {
                 if (y == 0) continue;
 
                 int color = getColumnColour(chunk, x, y, z,
-                        (x == 0) ? (west ? dataW.getHeightMapValue(dimension.chunkWidth - 1, z) : y)//chunk edge
+                        (x == 0) ? (west ? dataW.getHeightMapValue(dimension.chunkW - 1, z) : y)//chunk edge
                                 : chunk.getHeightMapValue(x - 1, z),//within chunk
-                        (z == 0) ? (north ? dataN.getHeightMapValue(x, dimension.chunkLength - 1) : y)//chunk edge
+                        (z == 0) ? (north ? dataN.getHeightMapValue(x, dimension.chunkL - 1) : y)//chunk edge
                                 : chunk.getHeightMapValue(x, z - 1)//within chunk
                 );
                 paint.setColor(color);

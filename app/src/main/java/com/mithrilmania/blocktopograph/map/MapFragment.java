@@ -46,7 +46,6 @@ import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.WorldActivityInterface;
 import com.mithrilmania.blocktopograph.block.KnownBlockRepr;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
-import com.mithrilmania.blocktopograph.chunk.ChunkKeyData;
 import com.mithrilmania.blocktopograph.chunk.ChunkTag;
 import com.mithrilmania.blocktopograph.chunk.NBTChunkData;
 import com.mithrilmania.blocktopograph.databinding.MapFragmentBinding;
@@ -162,6 +161,8 @@ public class MapFragment extends Fragment {
 
         //resume drawing the map
         mBinding.tileView.resume();
+        FragmentActivity activity = getActivity();
+        if (activity == null) return;
 
 //        Toast toast = new Toast(activity);
 //        toast.setView(getLayoutInflater().inflate(R.layout.toast_warn, (ViewGroup) activity.getWindow().getDecorView(), false));
@@ -806,7 +807,7 @@ public class MapFragment extends Fragment {
     public void removeMarker(AbstractMarker marker) {
         staticMarkers.remove(marker);
         proceduralMarkers.remove(marker);
-        if (marker.view != null)
+        if (marker.view != null && mBinding.tileView != null)
             mBinding.tileView.removeMarker(marker.view);
     }
 
@@ -921,8 +922,8 @@ public class MapFragment extends Fragment {
         Dimension dimension = worldProvider.get().getDimension();
 
         // 1 chunk per tile on scale 1.0
-        int pixelsPerBlockW_unscaled = MCTileProvider.TILESIZE / dimension.chunkWidth;
-        int pixelsPerBlockL_unscaled = MCTileProvider.TILESIZE / dimension.chunkLength;
+        int pixelsPerBlockW_unscaled = MCTileProvider.TILESIZE / dimension.chunkW;
+        int pixelsPerBlockL_unscaled = MCTileProvider.TILESIZE / dimension.chunkL;
 
         float scale = mBinding.tileView.getScale();
         float pixelsPerBlockScaledW = pixelsPerBlockW_unscaled * scale;
@@ -940,8 +941,8 @@ public class MapFragment extends Fragment {
 
         final Dimension dim = this.worldProvider.get().getDimension();
 
-        double chunkX = worldX / dim.chunkWidth;
-        double chunkZ = worldZ / dim.chunkLength;
+        double chunkX = worldX / dim.chunkW;
+        double chunkZ = worldZ / dim.chunkL;
 
         //negative doubles are rounded up when casting to int; floor them
         final int chunkXint = chunkX < 0 ? (((int) chunkX) - 1) : ((int) chunkX);
@@ -953,8 +954,6 @@ public class MapFragment extends Fragment {
             Log.d(this, "CANNOT FIND MAIN CONTAINER, WTF");
             return;
         }
-
-        ChunkKeyData chunkKeyData = new ChunkKeyData(chunkXint, chunkZint, dim.chunkHeighLowest, dim.chunkHeighHighest, dimension);
 
         AlertDialog alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(activity, R.style.AppTheme_Floating))
                 .setTitle(getString(R.string.postion_2D_floats_with_chunkpos, worldX, worldZ, chunkXint, chunkZint))
@@ -969,10 +968,10 @@ public class MapFragment extends Fragment {
                             onChooseAddMarker((int) worldX, (int) worldZ, activity, dim, container);
                             break;
                         case 2:
-                            onChooseEditEntitiesOrTileEntities(chunkKeyData, container, true);
+                            onChooseEditEntitiesOrTileEntities(dim, chunkXint, chunkZint, container, true);
                             break;
                         case 3:
-                            onChooseEditEntitiesOrTileEntities(chunkKeyData, container, false);
+                            onChooseEditEntitiesOrTileEntities(dim, chunkXint, chunkZint, container, false);
                             break;
                         case 4:
                             beginOrEndSelection((int) worldX, (int) worldZ);
@@ -1013,10 +1012,11 @@ public class MapFragment extends Fragment {
         }
     }
 
-    private void onChooseEditEntitiesOrTileEntities(ChunkKeyData chunkKeyData, View container, Boolean isEntity) {
+    private void onChooseEditEntitiesOrTileEntities(Dimension dim, int chunkXint, int chunkZint, View container, boolean isEntity) {
         final Chunk chunk;
         try {
-            chunk = world.getWorldData().getChunk(chunkKeyData);
+            chunk = world.getWorldData()
+                    .getChunk(chunkXint, chunkZint, dim);
         } catch (Exception e) {
             Log.d(this, e);
             Toast.makeText(getContext(), R.string.error_could_not_open_world, Toast.LENGTH_SHORT).show();
@@ -1115,6 +1115,9 @@ public class MapFragment extends Fragment {
                 .setCancelable(true)
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
+
+
+        return;
     }
 
     private void onChooseTeleportPlayer(float worldX, float worldZ, Dimension dim, View container) {
@@ -1225,7 +1228,7 @@ public class MapFragment extends Fragment {
         }
 
         //just open the editor if the data is there for us to edit it
-        this.worldProvider.get().openChunkNBTEditor(chunk.chunkKeyData.getChunkPos(0), chunk.chunkKeyData.getChunkPos(1), chunkData, mBinding.tileView);
+        this.worldProvider.get().openChunkNBTEditor(chunk.mChunkX, chunk.mChunkZ, chunkData, mBinding.tileView);
         return true;
     }
 
@@ -1251,7 +1254,6 @@ public class MapFragment extends Fragment {
         Collections.sort(choices, (a, b) -> a.namedBitmap.getNamedBitmapProvider().getBitmapDisplayName().compareTo(b.namedBitmap.getNamedBitmapProvider().getBitmapDisplayName()));
 
 
-        assert activity != null;
         new AlertDialog.Builder(activity)
                 .setTitle(R.string.filter_markers)
                 .setAdapter(new BitmapChoiceListAdapter(activity, choices), null)
@@ -1304,10 +1306,15 @@ public class MapFragment extends Fragment {
     }
 
     public void resetTileView() {
-        WorldActivityInterface worldProvider = this.worldProvider.get();
-        updateMarkerFilter();
-        mBinding.tileView.getDetailLevelManager().setLevelType(worldProvider.getMapType());
-        invalidateTileView();
+        if (mBinding.tileView != null) {
+            WorldActivityInterface worldProvider = this.worldProvider.get();
+
+            updateMarkerFilter();
+
+            mBinding.tileView.getDetailLevelManager().setLevelType(worldProvider.getMapType());
+
+            invalidateTileView();
+        }
     }
 
     public void invalidateTileView() {
@@ -1327,7 +1334,7 @@ public class MapFragment extends Fragment {
     public void frameTo(final double worldX, final double worldZ) {
         mBinding.tileView.post(() -> {
             Dimension dimension = worldProvider.get().getDimension();
-            mBinding.tileView.scrollToAndCenter(
+            if (mBinding.tileView != null) mBinding.tileView.scrollToAndCenter(
                     dimension.dimensionScale * worldX / (double) MCTileProvider.HALF_WORLDSIZE,
                     dimension.dimensionScale * worldZ / (double) MCTileProvider.HALF_WORLDSIZE);
         });
@@ -1503,7 +1510,7 @@ public class MapFragment extends Fragment {
         }
 
         protected void onPostExecute(final String[] players) {
-            owner.get().requireActivity().runOnUiThread(() -> {
+            owner.get().getActivity().runOnUiThread(() -> {
 
                 if (players == null) {
                     Snackbar.make(view.get(), R.string.failed_to_retrieve_player_data, Snackbar.LENGTH_LONG)
@@ -1531,38 +1538,41 @@ public class MapFragment extends Fragment {
                 new AlertDialog.Builder(activity.get())
                         .setTitle(R.string.go_to_player)
                         .setView(spinner)
-                        .setPositiveButton(R.string.go_loud, (dialog, whichButton) -> {
+                        .setPositiveButton(R.string.go_loud, new DialogInterface.OnClickListener() {
 
-                            //new tag type
-                            int spinnerIndex = spinner.getSelectedItemPosition();
-                            String playerKey = players[spinnerIndex];
+                            public void onClick(DialogInterface dialog, int whichButton) {
 
-                            try {
-                                DimensionVector3<Float> playerPos = owner.get().world.getMultiPlayerPos(playerKey);
+                                //new tag type
+                                int spinnerIndex = spinner.getSelectedItemPosition();
+                                String playerKey = players[spinnerIndex];
 
-                                Snackbar.make(owner.get().mBinding.tileView,
-                                        owner.get().getString(R.string.something_at_xyz_dim_float,
-                                                playerKey,
-                                                playerPos.x,
-                                                playerPos.y,
-                                                playerPos.z),
-                                        Snackbar.LENGTH_LONG)
-                                        .setAction("Action", null).show();
+                                try {
+                                    DimensionVector3<Float> playerPos = owner.get().world.getMultiPlayerPos(playerKey);
+
+                                    Snackbar.make(owner.get().mBinding.tileView,
+                                            owner.get().getString(R.string.something_at_xyz_dim_float,
+                                                    playerKey,
+                                                    playerPos.x,
+                                                    playerPos.y,
+                                                    playerPos.z),
+                                            Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
 
                                     WorldActivityInterface worldProvider = owner.get().worldProvider.get();
                                     Log.logFirebaseEvent(activity.get(), Log.CustomFirebaseEvent.GPS_LOCATE);
 
-                                if (playerPos.dimension != worldProvider.getDimension()) {
-                                    worldProvider.changeMapType(playerPos.dimension.defaultMapType, playerPos.dimension);
+                                    if (playerPos.dimension != worldProvider.getDimension()) {
+                                        worldProvider.changeMapType(playerPos.dimension.defaultMapType, playerPos.dimension);
+                                    }
+
+                                    owner.get().frameTo((double) playerPos.x, (double) playerPos.z);
+
+                                } catch (Exception e) {
+                                    Snackbar.make(view.get(), e.getMessage(), Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
                                 }
 
-                                owner.get().frameTo((double) playerPos.x, (double) playerPos.z);
-
-                            } catch (Exception e) {
-                                Snackbar.make(view.get(), Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_LONG)
-                                        .setAction("Action", null).show();
                             }
-
                         })
                         //or alert is cancelled
                         .setNegativeButton(android.R.string.cancel, null)

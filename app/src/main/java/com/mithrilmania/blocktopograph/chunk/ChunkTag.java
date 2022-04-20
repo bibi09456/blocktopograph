@@ -3,7 +3,6 @@ package com.mithrilmania.blocktopograph.chunk;
 /**
  * Reference from Tommaso Checchi (/u/mojang_tommo), MCPE developer:
  * https://www.reddit.com/r/MCPE/comments/5cw2tm/level_format_changes_in_mcpe_0171_100/d9zv9s8/
- * https://minecraft.fandom.com/wiki/Bedrock_Edition_level_format#Chunk_key_format
  */
 public enum ChunkTag {
 
@@ -16,9 +15,9 @@ public enum ChunkTag {
     BLOCK_ENTITY((byte) 0x31),
     ENTITY((byte) 0x32),
     PENDING_TICKS((byte) 0x33),//TODO untested
-    BLOCK_EXTRA_DATA((byte) 0x34),// using for pre 1.2.13
+    BLOCK_EXTRA_DATA((byte) 0x34),//TODO untested, 32768 bytes, used for top-snow.
     BIOME_STATE((byte) 0x35),//TODO untested
-    FINALIZED_STATE((byte) 0x36),
+    GENERATOR_STAGE((byte) 0x36),
     BORDER_BLOCKS((byte) 0x38),// Education Edition Feature
     HARDCODED_SPAWN_AREAS((byte) 0x39),
     RANDOM_TICKS((byte) 0x3A),
