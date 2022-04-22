@@ -1,3 +1,4 @@
 include ':app'
+include ':minecraft'
 include ':leveldb'
 include ':tileview'

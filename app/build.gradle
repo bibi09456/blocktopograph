@@ -61,6 +61,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:19.0.0'
     testImplementation 'junit:junit:4.13.2'
     implementation project(':leveldb')
+    implementation project(':minecraft')
     implementation project(':tileview')
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.github.bmelnychuk:atv:1.2.9'
