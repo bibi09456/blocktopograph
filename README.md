@@ -1,5 +1,9 @@
 # Blocktopograph
 
+## Paused Update
+Through my research, I did not find any information related to reading and writing world data such as chunks, and so on.</br>
+So this project will temporarily stop development until I have more information on how to read and write the data that I talked about.</br>
+
 ## Maintainer
 
 By *Proto Lambda*\(Link removed, as he asked to\) </br>
