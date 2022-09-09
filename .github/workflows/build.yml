@@ -22,8 +22,14 @@ jobs:
       mkdir out
       mv app/build/outputs/apk/debug/app-debug.apk out/
 
-   - name: Upload APK
+   - name: Upload APK to artifact
      uses: actions/upload-artifact@v2
      with:
       name: app-debug
       path: out/app-debug.apk
+
+   - name: Upload APK to release
+     uses: svenstaro/upload-release-action@v2
+     with:
+      file: out/app-debug.apk
+      overwrite: true
