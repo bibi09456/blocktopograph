@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.mithrilmania.blocktopograph">
+    xmlns:tools="http://schemas.android.com/tools">
 
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -33,7 +32,8 @@
             android:exported="true"
             android:name=".worldlist.WorldItemListActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
