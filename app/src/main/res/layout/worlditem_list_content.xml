@@ -80,37 +80,47 @@
                 android:id="@+id/world_last_played"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_toEndOf="@+id/world_gamemode"
                 android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="01/02/1234" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/world_path"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textColor="#9E9E9E"
+                android:textSize="@dimen/labels_text_size"
+                android:textStyle="italic"
+                tools:text="xBgAAAnsAQA=" />
 
             <TextView
                 android:id="@+id/world_last_opened_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_toEndOf="@+id/world_last_played"
+                android:layout_toEndOf="@+id/world_path"
                 android:textAppearance="?attr/textAppearanceListItem"
-                tools:text="1.18.0" />
+                tools:text="1.18.32" />
+
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/world_path"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="#9E9E9E"
-            android:textSize="@dimen/labels_text_size"
-            android:textStyle="italic"
-            tools:text="/storage/emulated/0/games/com.mojang/minecraftWorlds/xBgAAAnsAQA=/level.dat" />
-
     </LinearLayout>
-
 
 </LinearLayout>

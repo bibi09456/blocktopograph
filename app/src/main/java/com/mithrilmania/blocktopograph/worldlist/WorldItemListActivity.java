@@ -491,6 +491,7 @@ public class WorldItemListActivity extends AppCompatActivity {
             holder.mWorldSize.setText(IoUtil.getFileSizeInText(FileUtils.sizeOf(holder.mWorld.worldFolder)));
             holder.mWorldGamemode.setText(WorldListUtil.getWorldGamemodeText(WorldItemListActivity.this, holder.mWorld));
             holder.mWorldLastPlayed.setText(WorldListUtil.getLastPlayedText(WorldItemListActivity.this, holder.mWorld));
+            holder.mWorldLastOpenedVersion.setText(WorldListUtil.getLastOpenedVersion(holder.mWorld));
             holder.mWorldPath.setText(holder.mWorld.worldFolder.getName());
             holder.mWorldMark.setText(holder.mWorld.mark);
 
