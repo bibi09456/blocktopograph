@@ -19,8 +19,9 @@ import com.mithrilmania.blocktopograph.nbt.tags.ListTag;
 import com.mithrilmania.blocktopograph.nbt.tags.LongTag;
 import com.mithrilmania.blocktopograph.nbt.tags.StringTag;
 import com.mithrilmania.blocktopograph.nbt.tags.Tag;
-import com.mithrilmania.blocktopograph.util.IoUtil;
-import com.mithrilmania.blocktopograph.util.math.DimensionVector3;
+import com.mithrilmania.blocktopograph.utils.Converter;
+import com.mithrilmania.blocktopograph.utils.IoUtil;
+import com.mithrilmania.blocktopograph.utils.math.DimensionVector3;
 
 import java.io.File;
 import java.io.IOException;
@@ -339,7 +340,7 @@ public class World implements Serializable {
                 byte[] key = it.getKey();
                 byte[] value = it.getValue();
                 /*if(key.length == 9 && key[8] == RegionDataType.TERRAIN.dataID) */
-                Log.d(this, "key: " + new String(key) + " key in Hex: " + WorldData.bytesToHex(key) + " size: " + value.length);
+                Log.d(this, "key: " + new String(key) + " key in Hex: " + Converter.bytesToHexStr(key) + " size: " + value.length);
 
             }
 

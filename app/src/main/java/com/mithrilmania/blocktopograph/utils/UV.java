@@ -1,4 +1,4 @@
-package com.mithrilmania.blocktopograph.util;
+package com.mithrilmania.blocktopograph.utils;
 
 /**
  * Simple wrapper around texture coordinates.

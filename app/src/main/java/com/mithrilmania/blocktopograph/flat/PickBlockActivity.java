@@ -17,13 +17,12 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.common.collect.Streams;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.block.BlockTemplate;
 import com.mithrilmania.blocktopograph.block.BlockTemplates;
 import com.mithrilmania.blocktopograph.databinding.DialogPickBlockBinding;
 import com.mithrilmania.blocktopograph.databinding.ItemPickBlockBinding;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

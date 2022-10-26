@@ -12,8 +12,8 @@ import com.mithrilmania.blocktopograph.block.BlockTemplates;
 import com.mithrilmania.blocktopograph.chunk.terrain.TerrainSubChunk;
 import com.mithrilmania.blocktopograph.map.Biome;
 import com.mithrilmania.blocktopograph.map.Dimension;
-import com.mithrilmania.blocktopograph.util.ColorUtil;
-import com.mithrilmania.blocktopograph.util.Noise;
+import com.mithrilmania.blocktopograph.utils.ColorUtil;
+import com.mithrilmania.blocktopograph.utils.Noise;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

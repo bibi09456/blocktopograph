@@ -24,8 +24,8 @@ import com.mithrilmania.blocktopograph.WorldActivity;
 import com.mithrilmania.blocktopograph.backup.WorldBackups;
 import com.mithrilmania.blocktopograph.databinding.WorlditemDetailBinding;
 import com.mithrilmania.blocktopograph.test.MainTestActivity;
-import com.mithrilmania.blocktopograph.util.IoUtil;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.IoUtil;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 
 import org.apache.commons.io.FileUtils;
 

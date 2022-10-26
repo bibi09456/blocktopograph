@@ -8,9 +8,9 @@ import android.util.SparseArray;
 import androidx.annotation.NonNull;
 
 import com.mithrilmania.blocktopograph.Log;
-import com.mithrilmania.blocktopograph.util.ColorWrapper;
-import com.mithrilmania.blocktopograph.util.NamedBitmapProvider;
-import com.mithrilmania.blocktopograph.util.NamedBitmapProviderHandle;
+import com.mithrilmania.blocktopograph.utils.ColorWrapper;
+import com.mithrilmania.blocktopograph.utils.NamedBitmapProvider;
+import com.mithrilmania.blocktopograph.utils.NamedBitmapProviderHandle;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

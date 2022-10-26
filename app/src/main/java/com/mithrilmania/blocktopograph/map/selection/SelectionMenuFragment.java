@@ -27,7 +27,7 @@ import com.mithrilmania.blocktopograph.map.FloatPaneFragment;
 import com.mithrilmania.blocktopograph.map.edit.ChBiomeFragment;
 import com.mithrilmania.blocktopograph.map.edit.EditFunction;
 import com.mithrilmania.blocktopograph.map.edit.SearchAndReplaceFragment;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 
 import java.lang.ref.WeakReference;
 

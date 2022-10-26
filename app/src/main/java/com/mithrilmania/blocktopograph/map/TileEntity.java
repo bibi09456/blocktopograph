@@ -6,8 +6,8 @@ import android.graphics.Bitmap;
 import androidx.annotation.NonNull;
 
 import com.mithrilmania.blocktopograph.block.ListingBlock;
-import com.mithrilmania.blocktopograph.util.NamedBitmapProvider;
-import com.mithrilmania.blocktopograph.util.NamedBitmapProviderHandle;
+import com.mithrilmania.blocktopograph.utils.NamedBitmapProvider;
+import com.mithrilmania.blocktopograph.utils.NamedBitmapProviderHandle;
 
 import java.util.HashMap;
 import java.util.Map;

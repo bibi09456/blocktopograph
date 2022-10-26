@@ -7,9 +7,9 @@ import androidx.annotation.NonNull;
 
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.map.Dimension;
-import com.mithrilmania.blocktopograph.util.NamedBitmapProvider;
-import com.mithrilmania.blocktopograph.util.NamedBitmapProviderHandle;
-import com.mithrilmania.blocktopograph.util.math.Vector3;
+import com.mithrilmania.blocktopograph.utils.NamedBitmapProvider;
+import com.mithrilmania.blocktopograph.utils.NamedBitmapProviderHandle;
+import com.mithrilmania.blocktopograph.utils.math.Vector3;
 
 public class AbstractMarker implements NamedBitmapProviderHandle {
 

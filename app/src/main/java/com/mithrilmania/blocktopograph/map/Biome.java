@@ -2,7 +2,7 @@ package com.mithrilmania.blocktopograph.map;
 
 import android.util.SparseArray;
 
-import com.mithrilmania.blocktopograph.util.ColorWrapper;
+import com.mithrilmania.blocktopograph.utils.ColorWrapper;
 
 
 /*

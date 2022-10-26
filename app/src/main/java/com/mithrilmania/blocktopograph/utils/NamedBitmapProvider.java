@@ -1,4 +1,4 @@
-package com.mithrilmania.blocktopograph.util;
+package com.mithrilmania.blocktopograph.utils;
 
 import android.graphics.Bitmap;
 import androidx.annotation.NonNull;

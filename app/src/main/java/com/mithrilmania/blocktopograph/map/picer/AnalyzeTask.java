@@ -17,7 +17,7 @@ import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.chunk.ChunkTag;
 import com.mithrilmania.blocktopograph.chunk.Version;
 import com.mithrilmania.blocktopograph.map.Dimension;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;

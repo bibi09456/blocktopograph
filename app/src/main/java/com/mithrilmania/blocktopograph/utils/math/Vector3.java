@@ -1,4 +1,4 @@
-package com.mithrilmania.blocktopograph.util.math;
+package com.mithrilmania.blocktopograph.utils.math;
 import java.io.Serializable;
 
 public class Vector3<T extends Number> implements Serializable {

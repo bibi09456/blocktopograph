@@ -19,7 +19,7 @@ import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.databinding.FragLocatorPlayersBinding;
 import com.mithrilmania.blocktopograph.databinding.ItemLocatorPlayerBinding;
 import com.mithrilmania.blocktopograph.map.Player;
-import com.mithrilmania.blocktopograph.util.math.DimensionVector3;
+import com.mithrilmania.blocktopograph.utils.math.DimensionVector3;
 
 import java.lang.ref.WeakReference;
 

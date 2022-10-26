@@ -20,8 +20,8 @@ import com.mithrilmania.blocktopograph.backup.Backup;
 import com.mithrilmania.blocktopograph.backup.WorldBackups;
 import com.mithrilmania.blocktopograph.databinding.ActivityBackupBinding;
 import com.mithrilmania.blocktopograph.databinding.ItemBackupBinding;
-import com.mithrilmania.blocktopograph.util.Consumer;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.Consumer;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 
 import java.util.Date;
 

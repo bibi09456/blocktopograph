@@ -23,10 +23,6 @@ import java.util.List;
  * Wrapper around level.dat world spec en levelDB database.
  */
 public class WorldData {
-
-    //another method for debugging, makes it easy to print a readable byte array
-    private final static char[] hexArray = "0123456789abcdef".toCharArray();
-
     public DB db;
 
     private WeakReference<World> world;
@@ -36,16 +32,6 @@ public class WorldData {
     public WorldData(World world) {
         this.world = new WeakReference<>(world);
         this.mOldBlockRegistry = new OldBlockRegistry(2048);
-    }
-
-    static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[(bytes.length) * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
     }
 
     private static byte[] getChunkDataKey(int x, int z, ChunkTag type, Dimension dimension, byte subChunk, boolean asSubChunk) {
@@ -98,9 +84,6 @@ public class WorldData {
         if (dbFile.listFiles() == null)
             throw new WorldDataLoadException("Failed loading world-db: cannot list files in worldfolder");
 
-        for (File dbEntry : dbFile.listFiles()) {
-            Log.d(this, "File in db: " + dbEntry.getAbsolutePath());
-        }
         this.db = new DB(dbFile);
     }
 

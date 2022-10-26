@@ -38,8 +38,8 @@ import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.databinding.FragPicerBinding;
 import com.mithrilmania.blocktopograph.map.Dimension;
 import com.mithrilmania.blocktopograph.map.OpenLongPressMenuHandler;
-import com.mithrilmania.blocktopograph.util.ConvertUtil;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.Converter;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 
 import java.io.File;
 
@@ -302,7 +302,7 @@ public final class PicerFragment extends DialogFragment {
         Bitmap bmp = (Bitmap) o;
         view.setTag(null);
         String name = mWorld.getWorldDisplayName();
-        name = ConvertUtil.getLegalFileName(name);
+        name = Converter.getLegalFileName(name);
         new SaveTask(this, name).execute(bmp);
     }
 

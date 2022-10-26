@@ -11,7 +11,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.databinding.FragLocatorCoordBinding;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 
 public final class LocatorCoordFragment extends LocatorPageFragment {
 
