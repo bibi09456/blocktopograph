@@ -68,3 +68,5 @@ keystore.properties
 
 # Firebase configuration
 app/google-services.json
+
+.vscode

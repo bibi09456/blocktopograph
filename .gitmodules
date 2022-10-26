@@ -1,6 +1,3 @@
 [submodule "leveldb-mcpe"]
 	path = leveldb/src/main/cpp/leveldb-mcpe
 	url = git@github.com:Mojang/leveldb-mcpe
-[submodule "minecraft"]
-	path = minecraft
-	url = git@github.com:NguyenDuck/minecraft
