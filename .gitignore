@@ -70,3 +70,4 @@ keystore.properties
 app/google-services.json
 
 .vscode
+local.properties
