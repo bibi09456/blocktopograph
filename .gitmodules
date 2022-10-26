@@ -3,4 +3,4 @@
 	url = git@github.com:Mojang/leveldb-mcpe
 [submodule "minecraft"]
 	path = minecraft
-	url = https://github.com/Mojang/leveldb-mcpe.git
+	url = git@github.com:NguyenDuck/minecraft
