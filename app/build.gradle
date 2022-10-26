@@ -7,10 +7,17 @@ android {
     compileSdkVersion 32
     defaultConfig {
         applicationId 'rbq2012.blocktopograph'
+<<<<<<< HEAD
         minSdkVersion 21
         targetSdkVersion 32
         versionCode 1
         versionName "Beta 1.9.6"
+=======
+        minSdkVersion 26
+        targetSdkVersion 32
+        versionCode 1090007
+        versionName "1.9.5"
+>>>>>>> fcdb26e516488376ce68b3c47b9a4ea8a305a4bf
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -34,6 +41,7 @@ android {
             }
             //multiDexEnabled true
             ext.alwaysUpdateBuildId = false
+            applicationIdSuffix '.debug'
         }
 
         release {
@@ -53,6 +61,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    namespace 'com.mithrilmania.blocktopograph'
 }
 
 dependencies {
