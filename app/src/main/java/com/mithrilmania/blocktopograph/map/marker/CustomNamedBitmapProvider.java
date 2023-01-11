@@ -4,7 +4,7 @@ package com.mithrilmania.blocktopograph.map.marker;
 import android.graphics.Bitmap;
 import androidx.annotation.NonNull;
 
-import com.mithrilmania.blocktopograph.util.NamedBitmapProvider;
+import com.mithrilmania.blocktopograph.utils.NamedBitmapProvider;
 
 public class CustomNamedBitmapProvider implements NamedBitmapProvider {
 

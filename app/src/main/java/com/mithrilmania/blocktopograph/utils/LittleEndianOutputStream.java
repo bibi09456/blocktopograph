@@ -5,7 +5,7 @@
  *
  */
 
-package com.mithrilmania.blocktopograph.util;
+package com.mithrilmania.blocktopograph.utils;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;

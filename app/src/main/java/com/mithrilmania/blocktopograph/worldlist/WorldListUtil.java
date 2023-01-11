@@ -28,6 +28,10 @@ public class WorldListUtil {
         return dateFormat.format(lastPlayed * 1000);
     }
 
+    public static String getLastOpenedVersion(World world) {
+        return world.getMinClientVersion();
+    }
+
     public static String getWorldGamemodeText(Context context, World world) {
         String gameMode;
         try {

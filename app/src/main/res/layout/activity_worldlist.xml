@@ -30,18 +30,16 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="10"
-            android:gravity="top">
+            android:layout_height="match_parent"
+            android:layout_gravity="top">
 
             <TextView
                 android:id="@+id/worlditem_no_world"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="25dp"
-                android:textColor="#474747"
-                android:textStyle="bold|italic"
                 android:textAlignment="center"
+                android:textStyle="bold|italic"
                 tools:layout_editor_absoluteX="25dp" />
 
             <include
@@ -55,7 +53,6 @@
                 android:layout_gravity="bottom"
                 android:background="@android:color/transparent"
                 android:orientation="vertical">
-
 
                 <!--com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/fab_choose_worldfile"
@@ -75,14 +72,10 @@
                     android:layout_marginLeft="@dimen/fab_margin"
                     android:layout_marginRight="@dimen/fab_margin"
                     android:layout_marginBottom="40dp"
+                    android:contentDescription="@string/create_world_title"
                     android:focusable="false"
                     app:srcCompat="@drawable/ic_add" />
-
-
             </LinearLayout>
         </FrameLayout>
-
     </LinearLayout>
-
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

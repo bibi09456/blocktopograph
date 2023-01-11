@@ -22,7 +22,7 @@ import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.databinding.FragChBiomeBinding;
 import com.mithrilmania.blocktopograph.map.Biome;
 import com.mithrilmania.blocktopograph.map.selection.SelectionMenuFragment;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 
 import java.io.Serializable;
 

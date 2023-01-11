@@ -80,7 +80,6 @@ public class TileView extends ZoomPanLayout implements
     private CompositePathView mCompositePathView;
     private ScalingLayout mScalingLayout;
     private MarkerLayout mMarkerLayout;
-    private CalloutLayout mCalloutLayout;
 
     private RenderThrottleHandler mRenderThrottleHandler;
 
@@ -115,9 +114,6 @@ public class TileView extends ZoomPanLayout implements
 
         mMarkerLayout = new MarkerLayout(context);
         addView(mMarkerLayout);
-
-        mCalloutLayout = new CalloutLayout(context);
-        addView(mCalloutLayout);
 
         mDetailLevelManager.setDetailLevelChangeListener(this);
         mTileCanvasViewGroup.setTileRenderListener(this);
@@ -209,16 +205,6 @@ public class TileView extends ZoomPanLayout implements
      */
     public MarkerLayout getMarkerLayout() {
         return mMarkerLayout;
-    }
-
-    /**
-     * Returns the CalloutLayout instance used by the TileView to position and display Views used
-     * as callouts.
-     *
-     * @return The CalloutLayout instance.
-     */
-    public CalloutLayout getCalloutLayout() {
-        return mCalloutLayout;
     }
 
     /**
@@ -319,19 +305,6 @@ public class TileView extends ZoomPanLayout implements
      */
     public void setTransitionsEnabled(boolean enabled) {
         mTileCanvasViewGroup.setTransitionsEnabled(enabled);
-    }
-
-    /**
-     * Instructs Tile instances to recycle (or not).  This can be useful if using a caching system
-     * that re-uses bitmaps and expects them to not have been recycled.
-     * <p>
-     * The default value is true.
-     *
-     * @param shouldRecycleBitmaps True if bitmaps should call Bitmap.recycle when they are removed from view.
-     * @deprecated This value is no longer considered - bitmaps are always recycled when they're no longer used.
-     */
-    public void setShouldRecycleBitmaps(boolean shouldRecycleBitmaps) {
-        mTileCanvasViewGroup.setShouldRecycleBitmaps(shouldRecycleBitmaps);
     }
 
     /**
@@ -589,37 +562,6 @@ public class TileView extends ZoomPanLayout implements
     }
 
     /**
-     * Add a callout to the the TileView.  The callout can be any View.
-     * No LayoutParams are required; the View will be laid out using WRAP_CONTENT for both
-     * width and height, and positioned according to the x and y values supplied.
-     * Callout views will always be positioned at the top of the view tree (at the highest z-index),
-     * and will always be removed during any touch event that is not consumed by the callout View.
-     *
-     * @param view    View instance to be added to the TileView.
-     * @param x       Relative x position the View instance should be positioned at.
-     * @param y       Relative y position the View instance should be positioned at.
-     * @param anchorX The x-axis position of a callout view will be offset by a number equal to the width of the callout view multiplied by this value.
-     * @param anchorY The y-axis position of a callout view will be offset by a number equal to the height of the callout view multiplied by this value.
-     * @return The View instance added to the TileView.
-     */
-    public View addCallout(View view, double x, double y, Float anchorX, Float anchorY) {
-        return mCalloutLayout.addMarker(view,
-                mCoordinateTranslater.translateX(x),
-                mCoordinateTranslater.translateY(y),
-                anchorX, anchorY
-        );
-    }
-
-    /**
-     * Removes a callout View from the TileView.
-     *
-     * @param view The callout View to be removed.
-     */
-    public void removeCallout(View view) {
-        mCalloutLayout.removeMarker(view);
-    }
-
-    /**
      * Register a HotSpot that should fire a listener when a touch event occurs that intersects the
      * Region defined by the HotSpot.
      * <p>
@@ -784,7 +726,6 @@ public class TileView extends ZoomPanLayout implements
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        mCalloutLayout.removeAllViews();
         return super.onTouchEvent(event);
     }
 
@@ -823,7 +764,6 @@ public class TileView extends ZoomPanLayout implements
         mScalingLayout.setScale(scale);
         mCompositePathView.setScale(scale);
         mMarkerLayout.setScale(scale);
-        mCalloutLayout.setScale(scale);
     }
 
     @Override
@@ -915,12 +855,7 @@ public class TileView extends ZoomPanLayout implements
         final SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
         setScale(ss.mScale);
-        post(new Runnable() {
-            @Override
-            public void run() {
-                scrollToAndCenter(ss.mSavedCenterX, ss.mSavedCenterY);
-            }
-        });
+        post(() -> scrollToAndCenter(ss.mSavedCenterX, ss.mSavedCenterY));
     }
 
     private static class RenderThrottleHandler extends Handler {
@@ -932,7 +867,7 @@ public class TileView extends ZoomPanLayout implements
 
         public RenderThrottleHandler(TileView tileView) {
             super();
-            mTileViewWeakReference = new WeakReference<TileView>(tileView);
+            mTileViewWeakReference = new WeakReference<>(tileView);
         }
 
         @Override

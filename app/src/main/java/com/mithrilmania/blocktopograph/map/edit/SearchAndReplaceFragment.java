@@ -24,7 +24,7 @@ import com.mithrilmania.blocktopograph.databinding.FragSerachAndReplaceBinding;
 import com.mithrilmania.blocktopograph.databinding.IncludeBlockBinding;
 import com.mithrilmania.blocktopograph.flat.PickBlockActivity;
 import com.mithrilmania.blocktopograph.map.selection.SelectionMenuFragment;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 import com.tomergoldst.tooltips.ToolTip;
 import com.tomergoldst.tooltips.ToolTipsManager;
 

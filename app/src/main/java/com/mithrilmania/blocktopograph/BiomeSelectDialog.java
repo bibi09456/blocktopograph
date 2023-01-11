@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.mithrilmania.blocktopograph.databinding.DialogPickBiomeBinding;
 import com.mithrilmania.blocktopograph.databinding.ItemPickBiomeBinding;
 import com.mithrilmania.blocktopograph.map.Biome;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

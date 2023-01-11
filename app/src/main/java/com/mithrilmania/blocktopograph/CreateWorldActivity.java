@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment;
 
 import com.litl.leveldb.DB;
 import com.mithrilmania.blocktopograph.block.BlockTemplates;
-import com.mithrilmania.blocktopograph.block.ListingBlock;
 import com.mithrilmania.blocktopograph.databinding.ActivityCreateWorldBinding;
 import com.mithrilmania.blocktopograph.flat.EditFlatFragment;
 import com.mithrilmania.blocktopograph.flat.FlatLayers;
@@ -38,10 +37,10 @@ import com.mithrilmania.blocktopograph.nbt.tags.CompoundTag;
 import com.mithrilmania.blocktopograph.nbt.tags.LongTag;
 import com.mithrilmania.blocktopograph.nbt.tags.StringTag;
 import com.mithrilmania.blocktopograph.nbt.tags.Tag;
-import com.mithrilmania.blocktopograph.util.ConvertUtil;
-import com.mithrilmania.blocktopograph.util.IoUtil;
-import com.mithrilmania.blocktopograph.util.McUtil;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.Converter;
+import com.mithrilmania.blocktopograph.utils.IoUtil;
+import com.mithrilmania.blocktopograph.utils.McUtil;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 import com.tomergoldst.tooltips.ToolTip;
 import com.tomergoldst.tooltips.ToolTipsManager;
 
@@ -182,7 +181,7 @@ public final class CreateWorldActivity extends AppCompatActivity {
             }
 
             // Get dir.
-            String dirName = ConvertUtil.getLegalFileName(name) + "[" + verStr + "]";
+            String dirName = Converter.getLegalFileName(name) + "[" + verStr + "]";
             File wDir = new File(worldsDir, dirName);
             if (wDir.exists()) {
                 int cnt = 0;

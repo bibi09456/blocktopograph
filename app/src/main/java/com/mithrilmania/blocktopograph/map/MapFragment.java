@@ -65,9 +65,9 @@ import com.mithrilmania.blocktopograph.nbt.tags.FloatTag;
 import com.mithrilmania.blocktopograph.nbt.tags.IntTag;
 import com.mithrilmania.blocktopograph.nbt.tags.ListTag;
 import com.mithrilmania.blocktopograph.nbt.tags.Tag;
-import com.mithrilmania.blocktopograph.util.NamedBitmapProvider;
-import com.mithrilmania.blocktopograph.util.NamedBitmapProviderHandle;
-import com.mithrilmania.blocktopograph.util.math.DimensionVector3;
+import com.mithrilmania.blocktopograph.utils.NamedBitmapProvider;
+import com.mithrilmania.blocktopograph.utils.NamedBitmapProviderHandle;
+import com.mithrilmania.blocktopograph.utils.math.DimensionVector3;
 import com.qozix.tileview.detail.DetailLevelManager;
 import com.qozix.tileview.markers.MarkerLayout;
 

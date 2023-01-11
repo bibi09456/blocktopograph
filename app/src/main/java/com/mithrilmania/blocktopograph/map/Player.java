@@ -5,7 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.mithrilmania.blocktopograph.R;
-import com.mithrilmania.blocktopograph.util.math.DimensionVector3;
+import com.mithrilmania.blocktopograph.utils.math.DimensionVector3;
 
 
 public class Player {

@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 
 import com.mithrilmania.blocktopograph.R;
-import com.mithrilmania.blocktopograph.util.IoUtil;
+import com.mithrilmania.blocktopograph.utils.IoUtil;
 
 import java.io.File;
 import java.lang.ref.WeakReference;

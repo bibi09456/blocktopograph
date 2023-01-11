@@ -6,7 +6,7 @@ import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.block.KnownBlockRepr;
 import com.mithrilmania.blocktopograph.map.marker.AbstractMarker;
 import com.mithrilmania.blocktopograph.map.marker.CustomNamedBitmapProvider;
-import com.mithrilmania.blocktopograph.util.NamedBitmapProvider;
+import com.mithrilmania.blocktopograph.utils.NamedBitmapProvider;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

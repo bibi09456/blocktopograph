@@ -2,7 +2,7 @@ package com.mithrilmania.blocktopograph.chunk.terrain;
 
 import com.mithrilmania.blocktopograph.chunk.Chunk;
 import com.mithrilmania.blocktopograph.chunk.ChunkData;
-import com.mithrilmania.blocktopograph.util.Noise;
+import com.mithrilmania.blocktopograph.utils.Noise;
 
 
 public abstract class TerrainChunkData extends ChunkData {

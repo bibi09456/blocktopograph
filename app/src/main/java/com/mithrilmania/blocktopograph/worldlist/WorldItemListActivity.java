@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
@@ -36,7 +37,7 @@ import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.backup.WorldBackups;
-import com.mithrilmania.blocktopograph.util.IoUtil;
+import com.mithrilmania.blocktopograph.utils.IoUtil;
 
 import org.apache.commons.io.FileUtils;
 
@@ -143,12 +144,7 @@ public class WorldItemListActivity extends AppCompatActivity {
         }
 
         FloatingActionButton fabChooseWorldFile = findViewById(R.id.fab_create);
-        fabChooseWorldFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickCreateWorld();
-            }
-        });
+        fabChooseWorldFile.setOnClickListener(view -> onClickCreateWorld());
 
         RecyclerView recyclerView = findViewById(R.id.worlditem_list);
         worldItemAdapter = new WorldItemRecyclerViewAdapter();
@@ -157,10 +153,8 @@ public class WorldItemListActivity extends AppCompatActivity {
         if (verifyStoragePermissions(this)) {
             //directly open the world list if we already have access
             worldItemAdapter.enable();
+            checkNotWorldFound();
         }
-
-        checkNotWorldFound();
-
     }
 
     public void checkNotWorldFound() {
@@ -177,19 +171,7 @@ public class WorldItemListActivity extends AppCompatActivity {
             Snackbar.make(getWindow().getDecorView(), R.string.no_read_write_access, Snackbar.LENGTH_SHORT).show();
             return;
         }
-        startActivityForResult(new Intent(this, CreateWorldActivity.class), REQUEST_CODE_CREATE_WORLD);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_CODE_CREATE_WORLD:
-                    worldItemAdapter.loadWorldList();
-                    return;
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
+        startActivity(new Intent(this, CreateWorldActivity.class));
     }
 
     private boolean checkPermissions(@NonNull int[] grantResults) {
@@ -272,68 +254,66 @@ public class WorldItemListActivity extends AppCompatActivity {
                 alert.setTitle(R.string.open_world_custom_path);
                 alert.setView(pathText);
 
-                alert.setPositiveButton(R.string.open, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                alert.setPositiveButton(R.string.open, (dialog, whichButton) -> {
 
-                        //new tag name
-                        Editable pathEditable = pathText.getText();
-                        String path = (pathEditable == null || pathEditable.toString().equals("")) ? null : pathEditable.toString();
-                        if (path == null) {
-                            return;//no path, no world
-                        }
-
-                        String levelDat = "/level.dat";
-                        int levelIndex = path.lastIndexOf(levelDat);
-                        //if the path ends with /level.dat, remove it!
-                        if (levelIndex >= 0 && path.endsWith(levelDat))
-                            path = path.substring(0, levelIndex);
-
-                        String defaultPath = Environment.getExternalStorageDirectory().toString() + "/games/com.mojang/minecraftWorlds/";
-                        File worldFolder = new File(path);
-                        String errTitle = null, errMsg = String.format(getString(R.string.report_path_and_previous_search), path, defaultPath);
-                        if (!worldFolder.exists()) {
-                            errTitle = getString(R.string.no_file_folder_found_at_path);
-                        }
-                        if (!worldFolder.isDirectory()) {
-                            errTitle = getString(R.string.worldpath_is_not_directory);
-                        }
-                        if (!(new File(worldFolder, "level.dat").exists())) {
-                            errTitle = getString(R.string.no_level_dat_found);
-                        }
-                        if (errTitle != null) {
-                            new AlertDialog.Builder(WorldItemListActivity.this)
-                                    .setTitle(errTitle)
-                                    .setMessage(errMsg)
-                                    .setCancelable(true)
-                                    .setPositiveButton(android.R.string.ok, null)
-                                    .show();
-                        } else {
-
-                            try {
-                                World world = new World(worldFolder, null, WorldItemListActivity.this);
-
-                                if (mTwoPane) {
-                                    Bundle arguments = new Bundle();
-                                    arguments.putSerializable(World.ARG_WORLD_SERIALIZED, world);
-                                    WorldItemDetailFragment fragment = new WorldItemDetailFragment();
-                                    fragment.setArguments(arguments);
-                                    WorldItemListActivity.this.getSupportFragmentManager().beginTransaction()
-                                            .replace(R.id.worlditem_detail_container, fragment)
-                                            .commit();
-                                } else {
-                                    Intent intent = new Intent(WorldItemListActivity.this, WorldItemDetailActivity.class);
-                                    intent.putExtra(World.ARG_WORLD_SERIALIZED, world);
-
-                                    WorldItemListActivity.this.startActivity(intent);
-                                }
-
-                            } catch (Exception e) {
-                                Snackbar.make(getWindow().getDecorView(), R.string.error_opening_world, Snackbar.LENGTH_SHORT)
-                                        .setAction("Action", null).show();
-                            }
-                        }
-
+                    //new tag name
+                    Editable pathEditable = pathText.getText();
+                    String path = (pathEditable == null || pathEditable.toString().equals("")) ? null : pathEditable.toString();
+                    if (path == null) {
+                        return;//no path, no world
                     }
+
+                    String levelDat = "/level.dat";
+                    int levelIndex = path.lastIndexOf(levelDat);
+                    //if the path ends with /level.dat, remove it!
+                    if (levelIndex >= 0 && path.endsWith(levelDat))
+                        path = path.substring(0, levelIndex);
+
+                    String defaultPath = Environment.getExternalStorageDirectory().toString() + "/games/com.mojang/minecraftWorlds/";
+                    File worldFolder = new File(path);
+                    String errTitle = null, errMsg = String.format(getString(R.string.report_path_and_previous_search), path, defaultPath);
+                    if (!worldFolder.exists()) {
+                        errTitle = getString(R.string.no_file_folder_found_at_path);
+                    }
+                    if (!worldFolder.isDirectory()) {
+                        errTitle = getString(R.string.worldpath_is_not_directory);
+                    }
+                    if (!(new File(worldFolder, "level.dat").exists())) {
+                        errTitle = getString(R.string.no_level_dat_found);
+                    }
+                    if (errTitle != null) {
+                        new AlertDialog.Builder(WorldItemListActivity.this)
+                                .setTitle(errTitle)
+                                .setMessage(errMsg)
+                                .setCancelable(true)
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show();
+                    } else {
+
+                        try {
+                            World world = new World(worldFolder, null, WorldItemListActivity.this);
+
+                            if (mTwoPane) {
+                                Bundle arguments = new Bundle();
+                                arguments.putSerializable(World.ARG_WORLD_SERIALIZED, world);
+                                WorldItemDetailFragment fragment = new WorldItemDetailFragment();
+                                fragment.setArguments(arguments);
+                                WorldItemListActivity.this.getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.worlditem_detail_container, fragment)
+                                        .commit();
+                            } else {
+                                Intent intent = new Intent(WorldItemListActivity.this, WorldItemDetailActivity.class);
+                                intent.putExtra(World.ARG_WORLD_SERIALIZED, world);
+
+                                WorldItemListActivity.this.startActivity(intent);
+                            }
+
+                        } catch (Exception e) {
+                            Snackbar.make(getWindow().getDecorView(), R.string.error_opening_world, Snackbar.LENGTH_SHORT)
+                                    .setAction("Action", null).show();
+                        }
+                    }
+
                 });
 
                 alert.setCancelable(true);
@@ -444,48 +424,53 @@ public class WorldItemListActivity extends AppCompatActivity {
             saveFolders.add(new File(sd, "Android/data/com.mojang.minecraftpe/files/games/com.mojang/minecraftWorlds"));
             marks.add(null);
 
-            for (int i = 0, saveFoldersSize = saveFolders.size(); i < saveFoldersSize; i++) {
-                File dir = saveFolders.get(i);
-                File[] files = dir.listFiles(file -> {
-                    if (!file.isDirectory()) return false;
-                    return (new File(file, "level.dat").exists()
-                            || new File(file, WorldBackups.BTG_BACKUPS).exists());
-                });
-                if (files != null) for (File f : files) {
-                    try {
-                        mWorlds.add(new World(f, marks.get(i), WorldItemListActivity.this));
-                    } catch (World.WorldLoadException e) {
-                        Log.d(this, e);
-                    }
-                }
-            }
-
-            Collections.sort(mWorlds, new Comparator<World>() {
+            class AsyncGetWorlds extends AsyncTask<Void, Void, Void> {
                 @Override
-                public int compare(World a, World b) {
-                    try {
-                        long tA = WorldListUtil.getLastPlayedTimestamp(a);
-                        long tB = WorldListUtil.getLastPlayedTimestamp(b);
-                        return Long.compare(tB, tA);
-                    } catch (Exception e) {
-                        Log.d(this, e);
-                        return 0;
+                protected Void doInBackground(Void... voids) {
+                    for (int i = 0, saveFoldersSize = saveFolders.size(); i < saveFoldersSize; i++) {
+                        File dir = saveFolders.get(i);
+                        File[] files = dir.listFiles(file -> {
+                            if (!file.isDirectory()) return false;
+                            return (new File(file, "level.dat").exists()
+                                    || new File(file, WorldBackups.BTG_BACKUPS).exists());
+                        });
+                        if (files != null) for (File f : files) {
+                            try {
+                                mWorlds.add(new World(f, marks.get(i), WorldItemListActivity.this));
+                            } catch (World.WorldLoadException e) {
+                                Log.d(this, e);
+                            }
+                        }
                     }
+                    checkNotWorldFound();
+                    return null;
                 }
-            });
-
-            //load data into view
-            this.notifyDataSetChanged();
-
-            if (mWorlds.size() == 0) {
-                AlertDialog dia = new AlertDialog.Builder(WorldItemListActivity.this)
-                        .setTitle(R.string.err_noworld_1)
-                        .setView(R.layout.dialog_noworlds)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .create();
-                dia.show();
             }
 
+            class AsyncSort extends AsyncTask<Void, Void, Void> {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    Collections.sort(mWorlds, new Comparator<>() {
+                        @Override
+                        public int compare(World a, World b) {
+                            try {
+                                long tA = WorldListUtil.getLastPlayedTimestamp(a);
+                                long tB = WorldListUtil.getLastPlayedTimestamp(b);
+                                return Long.compare(tB, tA);
+                            } catch (Exception e) {
+                                Log.d(this, e);
+                                return 0;
+                            }
+                        }
+                    });
+                    return null;
+                }
+            }
+
+            new AsyncGetWorlds().execute();
+            new AsyncSort().execute();
+
+            this.notifyDataSetChanged();
         }
 
 
@@ -506,6 +491,7 @@ public class WorldItemListActivity extends AppCompatActivity {
             holder.mWorldSize.setText(IoUtil.getFileSizeInText(FileUtils.sizeOf(holder.mWorld.worldFolder)));
             holder.mWorldGamemode.setText(WorldListUtil.getWorldGamemodeText(WorldItemListActivity.this, holder.mWorld));
             holder.mWorldLastPlayed.setText(WorldListUtil.getLastPlayedText(WorldItemListActivity.this, holder.mWorld));
+            holder.mWorldLastOpenedVersion.setText(WorldListUtil.getLastOpenedVersion(holder.mWorld));
             holder.mWorldPath.setText(holder.mWorld.worldFolder.getName());
             holder.mWorldMark.setText(holder.mWorld.mark);
 
@@ -555,12 +541,6 @@ public class WorldItemListActivity extends AppCompatActivity {
                 mWorldLastPlayed = view.findViewById(R.id.world_last_played);
                 mWorldLastOpenedVersion = view.findViewById(R.id.world_last_opened_version);
                 mWorldPath = view.findViewById(R.id.world_path);
-            }
-
-            @NonNull
-            @Override
-            public String toString() {
-                return super.toString() + " '" + mWorldNameView.getText() + "'";
             }
         }
     }

@@ -22,19 +22,12 @@ import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.World;
 import com.mithrilmania.blocktopograph.WorldData;
-import com.mithrilmania.blocktopograph.block.OldBlock;
-import com.mithrilmania.blocktopograph.block.OldBlockRegistry;
-import com.mithrilmania.blocktopograph.block.KnownBlockRepr;
-import com.mithrilmania.blocktopograph.chunk.Chunk;
-import com.mithrilmania.blocktopograph.chunk.ChunkTag;
-import com.mithrilmania.blocktopograph.chunk.Version;
 import com.mithrilmania.blocktopograph.databinding.ActivityMainTestBinding;
-import com.mithrilmania.blocktopograph.map.Dimension;
 import com.mithrilmania.blocktopograph.nbt.convert.NBTConstants;
-import com.mithrilmania.blocktopograph.util.ConvertUtil;
-import com.mithrilmania.blocktopograph.util.IoUtil;
-import com.mithrilmania.blocktopograph.util.McUtil;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.Converter;
+import com.mithrilmania.blocktopograph.utils.IoUtil;
+import com.mithrilmania.blocktopograph.utils.McUtil;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -104,7 +97,7 @@ public final class MainTestActivity extends AppCompatActivity {
                 key = text.getBytes(NBTConstants.CHARSET);
                 break;
             case R.id.rb_form_hex: {
-                key = ConvertUtil.hexStringToBytes(text);
+                key = Converter.hexStringToBytes(text);
                 break;
             }
             default:
@@ -202,7 +195,7 @@ public final class MainTestActivity extends AppCompatActivity {
                         }
                     }
                     if (str == null)
-                        str = ConvertUtil.bytesToHexStr(key);
+                        str = Converter.bytesToHexStr(key);
                     keys.add(str);
                     originalKeys.add(key);
                     keyTypeText.add(isText);
@@ -234,7 +227,7 @@ public final class MainTestActivity extends AppCompatActivity {
 
     private void showData(byte[] data) {
         new AlertDialog.Builder(this)
-                .setMessage(ConvertUtil.bytesToHexStr(data))
+                .setMessage(Converter.bytesToHexStr(data))
                 .show();
     }
 
@@ -269,7 +262,7 @@ public final class MainTestActivity extends AppCompatActivity {
                 break flow;
             }
 
-            String name = ConvertUtil.getLegalFileName(mBinding.searchBar.getText().toString());
+            String name = Converter.getLegalFileName(mBinding.searchBar.getText().toString());
             File out = IoUtil.getFileWithFirstAvailableName(dir, name, ".dat", "(", ")");
             if (out == null) {
                 errno = IoUtil.Errno.UNKNOWN;

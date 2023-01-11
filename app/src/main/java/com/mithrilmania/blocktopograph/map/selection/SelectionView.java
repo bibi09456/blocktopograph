@@ -21,8 +21,8 @@ import androidx.annotation.RequiresApi;
 import com.mithrilmania.blocktopograph.R;
 import com.mithrilmania.blocktopograph.map.MCTileProvider;
 import com.mithrilmania.blocktopograph.map.MapTileView;
-import com.mithrilmania.blocktopograph.util.ConvertUtil;
-import com.mithrilmania.blocktopograph.util.UiUtil;
+import com.mithrilmania.blocktopograph.utils.Converter;
+import com.mithrilmania.blocktopograph.utils.UiUtil;
 
 import java.lang.ref.WeakReference;
 
@@ -495,10 +495,10 @@ public class SelectionView extends FrameLayout {
                 float currentX = scrollX + hw;
                 float hh = sh / 2.0f;
                 float currentY = scrollY + hh;
-                float dlt = ConvertUtil.distance(currentX, currentY, r.left, r.top);
-                float drt = ConvertUtil.distance(currentX, currentY, r.right, r.top);
-                float dlb = ConvertUtil.distance(currentX, currentY, r.left, r.bottom);
-                float drb = ConvertUtil.distance(currentX, currentY, r.right, r.bottom);
+                float dlt = Converter.distance(currentX, currentY, r.left, r.top);
+                float drt = Converter.distance(currentX, currentY, r.right, r.top);
+                float dlb = Converter.distance(currentX, currentY, r.left, r.bottom);
+                float drb = Converter.distance(currentX, currentY, r.right, r.bottom);
                 if (dlt < drt && dlt < dlb && dlt < drb) {
                     tileView.setScrollX((int) (r.left - hw));
                     tileView.setScrollY((int) (r.top - hh));

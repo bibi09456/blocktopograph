@@ -1,4 +1,4 @@
-package com.mithrilmania.blocktopograph.util.math;
+package com.mithrilmania.blocktopograph.utils.math;
 
 import com.mithrilmania.blocktopograph.map.Dimension;
 

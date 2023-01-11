@@ -8,7 +8,7 @@ import com.mithrilmania.blocktopograph.WorldData;
 import com.mithrilmania.blocktopograph.chunk.Chunk;
 import com.mithrilmania.blocktopograph.chunk.Version;
 import com.mithrilmania.blocktopograph.map.Dimension;
-import com.mithrilmania.blocktopograph.util.MTwister;
+import com.mithrilmania.blocktopograph.utils.MTwister;
 
 
 public class SlimeChunkRenderer implements MapRenderer {

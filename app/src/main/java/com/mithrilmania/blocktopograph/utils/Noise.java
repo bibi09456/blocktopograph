@@ -1,4 +1,4 @@
-package com.mithrilmania.blocktopograph.util;
+package com.mithrilmania.blocktopograph.utils;
 
 /**
  * Copyright 2001 Ken Perlin

@@ -1,4 +1,4 @@
-package com.mithrilmania.blocktopograph.util;
+package com.mithrilmania.blocktopograph.utils;
 
 import android.app.Activity;
 import android.content.Context;

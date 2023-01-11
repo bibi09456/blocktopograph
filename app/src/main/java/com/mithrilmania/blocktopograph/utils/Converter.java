@@ -1,6 +1,4 @@
-package com.mithrilmania.blocktopograph.util;
-
-
+package com.mithrilmania.blocktopograph.utils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,7 +6,7 @@ import androidx.annotation.Nullable;
 /**
  * Convert utils
  */
-public class ConvertUtil {
+public class Converter {
 
     public static String bytesToHexStr(byte[] in) {
         if (in == null) return "null";

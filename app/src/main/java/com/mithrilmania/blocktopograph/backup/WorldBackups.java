@@ -7,7 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.World;
-import com.mithrilmania.blocktopograph.util.IoUtil;
+import com.mithrilmania.blocktopograph.utils.IoUtil;
 
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
