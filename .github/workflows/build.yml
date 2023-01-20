@@ -11,7 +11,7 @@ jobs:
      with: 
       fetch-depth: 0
       submodules: recursive
-      ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      ssh-key: ${{ secrets.SSH_KEY }}
 
    - name: Setup JDK 11
      uses: actions/setup-java@v3
