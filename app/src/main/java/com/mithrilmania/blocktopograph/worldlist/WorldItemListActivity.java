@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
@@ -23,7 +22,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -184,30 +182,27 @@ public class WorldItemListActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_EXTERNAL_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length == PERMISSIONS_STORAGE.length && checkPermissions(grantResults)) {
+        if (requestCode == REQUEST_EXTERNAL_STORAGE) {// If request is cancelled, the result arrays are empty.
+            if (grantResults.length == PERMISSIONS_STORAGE.length && checkPermissions(grantResults)) {
 
-                    // permission was granted, yay!
-                    this.worldItemAdapter.enable();
+                // permission was granted, yay!
+                this.worldItemAdapter.enable();
 
-                } else {
+            } else {
 
-                    // permission denied, boo! Disable the
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    TextView msg = new TextView(this);
-                    float dpi = this.getResources().getDisplayMetrics().density;
-                    msg.setPadding((int) (19 * dpi), (int) (5 * dpi), (int) (14 * dpi), (int) (5 * dpi));
-                    msg.setMaxLines(20);
-                    msg.setMovementMethod(LinkMovementMethod.getInstance());
-                    msg.setText(R.string.no_sdcard_access);
-                    builder.setView(msg)
-                            .setTitle(R.string.action_help)
-                            .setCancelable(true)
-                            .setNeutralButton(android.R.string.ok, null)
-                            .show();
-                }
+                // permission denied, boo! Disable the
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                TextView msg = new TextView(this);
+                float dpi = this.getResources().getDisplayMetrics().density;
+                msg.setPadding((int) (19 * dpi), (int) (5 * dpi), (int) (14 * dpi), (int) (5 * dpi));
+                msg.setMaxLines(20);
+                msg.setMovementMethod(LinkMovementMethod.getInstance());
+                msg.setText(R.string.no_sdcard_access);
+                builder.setView(msg)
+                        .setTitle(R.string.action_help)
+                        .setCancelable(true)
+                        .setNeutralButton(android.R.string.ok, null)
+                        .show();
             }
         }
     }
@@ -219,26 +214,26 @@ public class WorldItemListActivity extends AppCompatActivity {
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        Bundle params = new Bundle();
-        int type;
-        switch (item.getItemId()) {
-            case R.id.action_open:
-                type = Log.ANA_PARAM_MAINACT_MENU_TYPE_OPEN;
-                break;
-            case R.id.action_help:
-                type = Log.ANA_PARAM_MAINACT_MENU_TYPE_HELP;
-                break;
-            case R.id.action_about:
-                type = Log.ANA_PARAM_MAINACT_MENU_TYPE_ABOUT;
-                break;
-            default:
-                type = 0;
-        }
-        params.putInt(Log.ANA_PARAM_MAINACT_MENU_TYPE, type);
-        Log.logFirebaseEvent(this, Log.CustomFirebaseEvent.MAINACT_MENU_OPEN, params);
+//        Bundle params = new Bundle();
+//        int type;
+//        switch (item.getItemId()) {
+//            case R.id.action_open:
+//                type = Log.ANA_PARAM_MAINACT_MENU_TYPE_OPEN;
+//                break;
+//            case R.id.action_help:
+//                type = Log.ANA_PARAM_MAINACT_MENU_TYPE_HELP;
+//                break;
+//            case R.id.action_about:
+//                type = Log.ANA_PARAM_MAINACT_MENU_TYPE_ABOUT;
+//                break;
+//            default:
+//                type = 0;
+//        }
+//        params.putInt(Log.ANA_PARAM_MAINACT_MENU_TYPE, type);
+//        Log.logFirebaseEvent(this, Log.CustomFirebaseEvent.MAINACT_MENU_OPEN, params);
 
         //some text pop-up dialogs, some with simple HTML tags.
         switch (item.getItemId()) {
@@ -411,6 +406,7 @@ public class WorldItemListActivity extends AppCompatActivity {
             return disabled;
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         public void loadWorldList() {
             if (disabled) return;
             mWorlds.clear();
@@ -424,55 +420,39 @@ public class WorldItemListActivity extends AppCompatActivity {
             saveFolders.add(new File(sd, "Android/data/com.mojang.minecraftpe/files/games/com.mojang/minecraftWorlds"));
             marks.add(null);
 
-            class AsyncGetWorlds extends AsyncTask<Void, Void, Void> {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    for (int i = 0, saveFoldersSize = saveFolders.size(); i < saveFoldersSize; i++) {
-                        File dir = saveFolders.get(i);
-                        File[] files = dir.listFiles(file -> {
-                            if (!file.isDirectory()) return false;
-                            return (new File(file, "level.dat").exists()
-                                    || new File(file, WorldBackups.BTG_BACKUPS).exists());
-                        });
-                        if (files != null) for (File f : files) {
-                            try {
-                                mWorlds.add(new World(f, marks.get(i), WorldItemListActivity.this));
-                            } catch (World.WorldLoadException e) {
-                                Log.d(this, e);
-                            }
-                        }
+            for (int i = 0, saveFoldersSize = saveFolders.size(); i < saveFoldersSize; i++) {
+                File dir = saveFolders.get(i);
+                File[] files = dir.listFiles(file -> {
+                    if (!file.isDirectory()) return false;
+                    return (new File(file, "level.dat").exists()
+                            || new File(file, WorldBackups.BTG_BACKUPS).exists());
+                });
+                if (files != null) for (File f : files) {
+                    try {
+                        mWorlds.add(new World(f, marks.get(i), WorldItemListActivity.this));
+                    } catch (World.WorldLoadException e) {
+                        Log.d(this, e);
                     }
-                    checkNotWorldFound();
-                    return null;
                 }
             }
+            checkNotWorldFound();
 
-            class AsyncSort extends AsyncTask<Void, Void, Void> {
+            Collections.sort(mWorlds, new Comparator<>() {
                 @Override
-                protected Void doInBackground(Void... voids) {
-                    Collections.sort(mWorlds, new Comparator<>() {
-                        @Override
-                        public int compare(World a, World b) {
-                            try {
-                                long tA = WorldListUtil.getLastPlayedTimestamp(a);
-                                long tB = WorldListUtil.getLastPlayedTimestamp(b);
-                                return Long.compare(tB, tA);
-                            } catch (Exception e) {
-                                Log.d(this, e);
-                                return 0;
-                            }
-                        }
-                    });
-                    return null;
+                public int compare(World a, World b) {
+                    try {
+                        long tA = WorldListUtil.getLastPlayedTimestamp(a);
+                        long tB = WorldListUtil.getLastPlayedTimestamp(b);
+                        return Long.compare(tB, tA);
+                    } catch (Exception e) {
+                        Log.d(this, e);
+                        return 0;
+                    }
                 }
-            }
-
-            new AsyncGetWorlds().execute();
-            new AsyncSort().execute();
+            });
 
             this.notifyDataSetChanged();
         }
-
 
         @NonNull
         @Override
@@ -481,7 +461,6 @@ public class WorldItemListActivity extends AppCompatActivity {
                     .inflate(R.layout.worlditem_list_content, parent, false);
             return new ViewHolder(view);
         }
-
 
         @SuppressLint("SetTextI18n")
         @Override

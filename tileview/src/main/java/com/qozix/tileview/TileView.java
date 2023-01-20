@@ -1,5 +1,6 @@
 package com.qozix.tileview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -22,7 +23,6 @@ import com.qozix.tileview.geom.FloatMathHelper;
 import com.qozix.tileview.graphics.BitmapProvider;
 import com.qozix.tileview.hotspots.HotSpot;
 import com.qozix.tileview.hotspots.HotSpotManager;
-import com.qozix.tileview.markers.CalloutLayout;
 import com.qozix.tileview.markers.MarkerLayout;
 import com.qozix.tileview.paths.CompositePathView;
 import com.qozix.tileview.tiles.TileCanvasViewGroup;
@@ -73,18 +73,17 @@ public class TileView extends ZoomPanLayout implements
     protected static final int DEFAULT_TILE_SIZE = 256;
 
     private DetailLevelManager mDetailLevelManager = new DetailLevelManager();
-    private CoordinateTranslater mCoordinateTranslater = new CoordinateTranslater();
-    private HotSpotManager mHotSpotManager = new HotSpotManager();
+    private final CoordinateTranslater mCoordinateTranslater = new CoordinateTranslater();
+    private final HotSpotManager mHotSpotManager = new HotSpotManager();
 
-    private TileCanvasViewGroup mTileCanvasViewGroup;
-    private CompositePathView mCompositePathView;
-    private ScalingLayout mScalingLayout;
-    private MarkerLayout mMarkerLayout;
+    private final TileCanvasViewGroup mTileCanvasViewGroup;
+    private final CompositePathView mCompositePathView;
+    private final ScalingLayout mScalingLayout;
+    private final MarkerLayout mMarkerLayout;
 
-    private RenderThrottleHandler mRenderThrottleHandler;
+    private final RenderThrottleHandler mRenderThrottleHandler;
 
     private boolean mShouldRenderWhilePanning = false;
-    private boolean mShouldUpdateDetailLevelWhileZooming = false;
 
     /**
      * Constructor to use when creating a TileView from code.
@@ -494,10 +493,9 @@ public class TileView extends ZoomPanLayout implements
      * @param y       Relative y position the View instance should be positioned at.
      * @param anchorX The x-axis position of a marker will be offset by a number equal to the width of the marker multiplied by this value.
      * @param anchorY The y-axis position of a marker will be offset by a number equal to the height of the marker multiplied by this value.
-     * @return The View instance added to the TileView.
      */
-    public View addMarker(View view, double x, double y, Float anchorX, Float anchorY) {
-        return mMarkerLayout.addMarker(view,
+    public void addMarker(View view, double x, double y, Float anchorX, Float anchorY) {
+        mMarkerLayout.addMarker(view,
                 mCoordinateTranslater.translateX(x),
                 mCoordinateTranslater.translateY(y),
                 anchorX, anchorY
@@ -721,9 +719,9 @@ public class TileView extends ZoomPanLayout implements
      * @param shouldUpdate True if it should lock {@link DetailLevel} when a zoom begins.
      */
     public void setShouldUpdateDetailLevelWhileZooming(boolean shouldUpdate) {
-        mShouldUpdateDetailLevelWhileZooming = shouldUpdate;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return super.onTouchEvent(event);

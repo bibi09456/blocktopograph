@@ -6,8 +6,6 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Streams;
 import com.mithrilmania.blocktopograph.BuildConfig;
 import com.mithrilmania.blocktopograph.Log;
 import com.mithrilmania.blocktopograph.WorldData;
@@ -15,12 +13,10 @@ import com.mithrilmania.blocktopograph.block.Block;
 import com.mithrilmania.blocktopograph.block.BlockTemplate;
 import com.mithrilmania.blocktopograph.block.BlockTemplates;
 import com.mithrilmania.blocktopograph.block.BlockType;
-import com.mithrilmania.blocktopograph.block.blockproperty.BlockProperty;
 import com.mithrilmania.blocktopograph.chunk.ChunkTag;
 import com.mithrilmania.blocktopograph.map.Dimension;
 import com.mithrilmania.blocktopograph.nbt.convert.NBTInputStream;
 import com.mithrilmania.blocktopograph.nbt.convert.NBTOutputStream;
-import com.mithrilmania.blocktopograph.nbt.tags.ByteTag;
 import com.mithrilmania.blocktopograph.nbt.tags.CompoundTag;
 import com.mithrilmania.blocktopograph.nbt.tags.IntTag;
 import com.mithrilmania.blocktopograph.nbt.tags.StringTag;
@@ -34,11 +30,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
 
@@ -398,24 +391,33 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
         @RequiresApi(api = Build.VERSION_CODES.N)
         private static CompoundTag serializeBlock(@NonNull Block block) {
             StringTag blockName = new StringTag(PALETTE_KEY_NAME, block.getName());
-            CompoundTag blockStates = new CompoundTag(PALETTE_KEY_STATES, new LinkedList<Tag>(
-                    Streams.concat(Streams.zip(
-                            Arrays.stream(block.getType().getKnownProperties()).map(BlockProperty::getName),
-                            Arrays.stream(block.getKnownProperties()), Maps::immutableEntry).filter(Objects::nonNull),
-                            block.getCustomProperties().entrySet().stream()).map((entry) -> {
-                                    var name = entry.getKey();
-                                    var val = entry.getValue();
-                                    if (val instanceof Byte) return new ByteTag(name, (Byte) val);
-                                    else if (val instanceof Integer)
-                                        return new IntTag(name, (Integer) val);
-                                    else if (val instanceof String)
-                                        return new StringTag(name, (String) val);
-                                    else
-                                        throw new RuntimeException("block state with unsupported type");
-                                }).collect(Collectors.toList())
-                ));
-            IntTag blockVersion = new IntTag(PALETTE_KEY_VERSION, 2012);
-            LinkedList<Tag> compoundTagValue = new LinkedList<Tag>();
+
+            LinkedList<Tag<?>> tags = new LinkedList<>();
+
+            var knownProps = block.getType().getKnownProperties();
+//            for (var prop : knownProps) {
+//
+//            }
+//            CompoundTag blockStates = new CompoundTag(PALETTE_KEY_STATES, new LinkedList<>(
+//                    Streams.concat(
+//                            Streams.zip(Arrays.stream(block.getType().getKnownProperties()).map(BlockProperty::getName),
+//                                    Arrays.stream(block.getKnownProperties()), Maps::immutableEntry).filter(Objects::nonNull),
+//                            block.getCustomProperties().entrySet().stream()).map((entry) -> {
+//                        var name = entry.getKey();
+//                        var val = entry.getValue();
+//                        if (val instanceof Byte) return new ByteTag(name, (Byte) val);
+//                        else if (val instanceof Integer)
+//                            return new IntTag(name, (Integer) val);
+//                        else if (val instanceof String)
+//                            return new StringTag(name, (String) val);
+//                        else
+//                            throw new RuntimeException("block state with unsupported type");
+//                    }).collect(Collectors.toList())
+//            ));
+
+            CompoundTag blockStates = new CompoundTag(PALETTE_KEY_STATES, tags);
+            IntTag blockVersion = new IntTag(PALETTE_KEY_VERSION, 17879555);
+            LinkedList<Tag<?>> compoundTagValue = new LinkedList<>();
             compoundTagValue.add(blockName);
             compoundTagValue.add(blockStates);
             compoundTagValue.add(blockVersion);
@@ -428,9 +430,7 @@ public final class V1d2d13TerrainSubChunk extends TerrainSubChunk {
             var builder = (blockType == null ? new Block.Builder(name) : new Block.Builder(blockType));
             for (var state : ((CompoundTag) tag.getChildTagByKey(PALETTE_KEY_STATES)).getValue())
                 builder.setProperty(state);
-            Log.d(BlockStorage.class, "fuckfuckversion" + tag.getChildTagByKey(PALETTE_KEY_VERSION).getValue());
             return builder.build();
         }
-
     }
 }

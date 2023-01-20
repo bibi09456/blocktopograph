@@ -16,7 +16,6 @@ import com.mithrilmania.blocktopograph.map.Dimension;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,8 +24,8 @@ import java.util.List;
 public class WorldData {
     public DB db;
 
-    private WeakReference<World> world;
-    private LruCache<Key, Chunk> chunks = new ChunkCache(this, 256);
+    private final WeakReference<World> world;
+    private final LruCache<Key, Chunk> chunks = new ChunkCache(this, 256);
     public final OldBlockRegistry mOldBlockRegistry;
 
     public WorldData(World world) {
@@ -65,7 +64,6 @@ public class WorldData {
     //load db when needed (does not load it!)
     @SuppressLint({"SetWorldReadable", "SetWorldWritable"})
     public void load() throws WorldDataLoadException {
-
         if (db != null) return;
 
         World world = this.world.get();
@@ -80,7 +78,6 @@ public class WorldData {
                 throw new WorldDataLoadException("World-db folder is not writable! World-db folder: " + dbFile.getAbsolutePath());
         }
 
-        Log.d(this, "WorldFolder: " + world.worldFolder.getAbsolutePath());
         if (dbFile.listFiles() == null)
             throw new WorldDataLoadException("Failed loading world-db: cannot list files in worldfolder");
 
@@ -122,10 +119,7 @@ public class WorldData {
         this.openDB();
 
         byte[] chunkKey = getChunkDataKey(x, z, type, dimension, subChunk, asSubChunk);
-        Log.d(this,"Getting cX: "+x+" cZ: "+z+" with key: "+ type.name());
-        byte[] result = db.get(chunkKey);
-        if (BuildConfig.DEBUG) Log.d(this, Arrays.toString(result));
-        return result;
+        return db.get(chunkKey);
     }
 
     public byte[] getChunkData(int x, int z, ChunkTag type, Dimension dimension) throws WorldDBException, WorldDBLoadException {
@@ -147,23 +141,23 @@ public class WorldData {
     }
 
     public void removeFullChunk(int x, int z, Dimension dimension) {
-        var iterator = db.iterator();
-        int count = 0;
+        var it = db.iterator();
         var compareKey = getChunkDataKey(x, z, ChunkTag.DATA_2D, dimension, (byte) 0, false);
         int baseKeyLength = dimension == Dimension.OVERWORLD ? 8 : 12;
-        for (iterator.seekToFirst(); iterator.isValid() && count < 800; iterator.next(), count++) {
-            byte[] key = iterator.getKey();
+        for (it.seekToFirst(); it.isValid(); it.next()) {
+            byte[] key = it.getKey();
             boolean allMatched = false;
             for (var i = 0; i < baseKeyLength; i++) {
                 if (key[i] == compareKey[i]) {
-                    if (i == baseKeyLength+1) allMatched = true;
+                    if (i == baseKeyLength - 1) allMatched = true;
                 } else {
                     break;
                 }
             }
-            if (key.length > baseKeyLength && key.length <= baseKeyLength + 3 && allMatched) db.delete(key);
+            if (key.length > baseKeyLength && key.length <= baseKeyLength + 3 && allMatched)
+                db.delete(key);
         }
-        iterator.close();
+        it.close();
     }
 
     public Chunk getChunk(int cX, int cZ, Dimension dimension, boolean createIfMissing, Version createOfVersion) {
@@ -210,7 +204,7 @@ public class WorldData {
 
     private static class ChunkCache extends LruCache<Key, Chunk> {
 
-        private WeakReference<WorldData> worldData;
+        private final WeakReference<WorldData> worldData;
 
         ChunkCache(WorldData worldData, int maxSize) {
             super(maxSize);
